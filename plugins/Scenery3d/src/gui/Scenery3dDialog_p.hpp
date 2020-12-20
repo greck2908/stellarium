@@ -33,18 +33,18 @@
 class CubemapModeListModel : public QAbstractListModel
 {
 	Q_OBJECT
-
 private:
 	Scenery3d* mgr;
-
 public:
+
+
 	CubemapModeListModel(QObject* parent = Q_NULLPTR) : QAbstractListModel(parent)
 	{
 		mgr = GETSTELMODULE(Scenery3d);
 		Q_ASSERT(mgr);
 	}
 
-	virtual int rowCount(const QModelIndex &parent) const Q_DECL_OVERRIDE
+	int rowCount(const QModelIndex &parent) const
 	{
 		Q_UNUSED(parent);
 		if(mgr->getIsANGLE())
@@ -58,7 +58,7 @@ public:
 		return 3;
 	}
 
-	virtual QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE
+	QVariant data(const QModelIndex &index, int role) const
 	{
 		if(role == Qt::DisplayRole || role == Qt::EditRole)
 		{

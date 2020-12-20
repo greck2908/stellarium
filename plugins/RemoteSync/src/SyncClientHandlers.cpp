@@ -48,6 +48,7 @@ ClientHandler::ClientHandler(SyncClient *client)
 ClientErrorHandler::ClientErrorHandler(SyncClient *client)
 	: ClientHandler(client)
 {
+
 }
 
 bool ClientErrorHandler::handleMessage(QDataStream &stream, SyncProtocol::tPayloadSize dataSize, SyncRemotePeer &peer)
@@ -155,14 +156,12 @@ bool ClientAuthHandler::handleMessage(QDataStream &stream, SyncProtocol::tPayloa
 
 bool ClientAliveHandler::handleMessage(QDataStream &stream, SyncProtocol::tPayloadSize dataSize, SyncRemotePeer &peer)
 {
-	Q_UNUSED(peer)
 	Alive p;
 	return p.deserialize(stream,dataSize);
 }
 
 bool ClientTimeHandler::handleMessage(QDataStream &stream, SyncProtocol::tPayloadSize dataSize, SyncRemotePeer &peer)
 {
-	Q_UNUSED(peer)
 	Time msg;
 	bool ok = msg.deserialize(stream, dataSize);
 
@@ -180,7 +179,6 @@ bool ClientTimeHandler::handleMessage(QDataStream &stream, SyncProtocol::tPayloa
 
 bool ClientLocationHandler::handleMessage(QDataStream &stream, SyncProtocol::tPayloadSize dataSize, SyncRemotePeer &peer)
 {
-	Q_UNUSED(peer)
 	Location msg;
 	bool ok = msg.deserialize(stream,dataSize);
 
@@ -223,7 +221,6 @@ ClientSelectionHandler::ClientSelectionHandler()
 
 bool ClientSelectionHandler::handleMessage(QDataStream &stream, SyncProtocol::tPayloadSize dataSize, SyncRemotePeer &peer)
 {
-	Q_UNUSED(peer)
 	Selection msg;
 	bool ok = msg.deserialize(stream, dataSize);
 
@@ -303,7 +300,6 @@ ClientStelPropertyUpdateHandler::ClientStelPropertyUpdateHandler(bool skipGuiPro
 
 bool ClientStelPropertyUpdateHandler::handleMessage(QDataStream &stream, SyncProtocol::tPayloadSize dataSize, SyncRemotePeer &peer)
 {
-	Q_UNUSED(peer)
 	StelPropertyUpdate msg;
 	bool ok = msg.deserialize(stream, dataSize);
 
@@ -330,7 +326,6 @@ ClientViewHandler::ClientViewHandler()
 
 bool ClientViewHandler::handleMessage(QDataStream &stream, SyncProtocol::tPayloadSize dataSize, SyncRemotePeer &peer)
 {
-	Q_UNUSED(peer)
 	View msg;
 	bool ok = msg.deserialize(stream, dataSize);
 	if(!ok) return false;
@@ -346,7 +341,6 @@ ClientFovHandler::ClientFovHandler()
 
 bool ClientFovHandler::handleMessage(QDataStream &stream, SyncProtocol::tPayloadSize dataSize, SyncRemotePeer &peer)
 {
-	Q_UNUSED(peer)
 	Fov msg;
 	bool ok = msg.deserialize(stream, dataSize);
 	if(!ok) return false;

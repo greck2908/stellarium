@@ -61,6 +61,7 @@ private:
 	void setAboutHtml(void);
 	void updateGuiFromSettings(void);
 	QTimer* updateTimer;
+
 };
 
 #endif // NOVAEDIALOG_HPP

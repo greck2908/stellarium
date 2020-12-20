@@ -1,5 +1,5 @@
 // Author and Copyright: Johannes Gajdosik, 2007
-// License: GNU GPLv2 or later
+// License: GPL
 // g++ -O2 ConvertCatToNative.C -o ConvertCatToNative
 
 // If you use a compiler different from gcc - which I discourage -

@@ -26,12 +26,12 @@ class ToastMgr : public StelModule
 {
 	Q_OBJECT
 	Q_PROPERTY(bool surveyDisplayed
-			READ getFlagShow
-			WRITE setFlagShow
+			READ getFlagSurveyShow
+			WRITE setFlagSurveyShow
 			NOTIFY surveyDisplayedChanged)
 public:
 	ToastMgr();
-	virtual ~ToastMgr() Q_DECL_OVERRIDE;
+	virtual ~ToastMgr();
 	virtual void init() Q_DECL_OVERRIDE;
 	virtual void deinit() Q_DECL_OVERRIDE;
 	virtual void update(double deltaTime) Q_DECL_OVERRIDE;
@@ -40,8 +40,8 @@ public:
 	virtual double getCallOrder(StelModuleActionName actionName) const Q_DECL_OVERRIDE;
 
 public slots:
-	void setFlagShow(bool displayed);
-	bool getFlagShow(void) const;
+	void setFlagSurveyShow(bool displayed);
+	bool getFlagSurveyShow(void) const;
 
 signals:
 	void surveyDisplayedChanged(const bool displayed) const;

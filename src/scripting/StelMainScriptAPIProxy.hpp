@@ -49,6 +49,7 @@ public:
 
 public slots:
 	void setDiskViewport(bool b);
+
 };
 
 #endif // STELMAINSCRIPTAPIPROXY_HPP

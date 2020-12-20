@@ -71,8 +71,7 @@ Nova::Nova(const QVariantMap& map)
 	m6 = map.value("m6", -1).toInt();
 	m9 = map.value("m9", -1).toInt();
 	RA = StelUtils::getDecAngle(map.value("RA").toString());
-	Dec = StelUtils::getDecAngle(map.value("Dec").toString());
-	StelUtils::spheToRect(RA, Dec, XYZ);
+	Dec = StelUtils::getDecAngle(map.value("Dec").toString());	
 	distance = map.value("distance").toDouble();
 
 	initialized = true;
@@ -85,20 +84,20 @@ Nova::~Nova()
 
 QVariantMap Nova::getMap(void) const
 {
-	const QVariantMap map = {
-	{"designation", designation},
-	{"name", novaName},
-	{"type", novaType},
-	{"maxMagnitude", maxMagnitude},
-	{"minMagnitude", minMagnitude},
-	{"peakJD", peakJD},
-	{"m2", m2},
-	{"m3", m3},
-	{"m6", m6},
-	{"m9", m9},
-	{"RA", RA},
-	{"Dec", Dec},
-	{"distance", distance}};
+	QVariantMap map;
+	map["designation"] = designation;
+	map["name"] = novaName;
+	map["type"] = novaType;
+	map["maxMagnitude"] = maxMagnitude;
+	map["minMagnitude"] = minMagnitude;
+	map["peakJD"] = peakJD;
+	map["m2"] = m2;
+	map["m3"] = m3;
+	map["m6"] = m6;
+	map["m9"] = m9;
+	map["RA"] = RA;
+	map["Dec"] = Dec;	
+	map["distance"] = distance;
 
 	return map;
 }
@@ -115,7 +114,7 @@ QString Nova::getNameI18n() const
 	QRegExp nn("^Nova\\s+(\\w+|\\w+\\s+\\w+)\\s+(\\d+|\\d+\\s+#\\d+)$");
 	QString nameI18n = novaName;
 	if (nn.exactMatch(novaName))
-		nameI18n = QString("%1 %2 %3").arg(trans.qtranslate("Nova", "Nova template"), trans.qtranslate(nn.cap(1).trimmed(), "Genitive name of constellation"), nn.cap(2).trimmed());
+		nameI18n = QString("%1 %2 %3").arg(trans.qtranslate("Nova", "Nova template"), trans.qtranslate(nn.capturedTexts().at(1).trimmed(), "Genitive name of constellation"), nn.capturedTexts().at(2).trimmed());
 	else
 		nameI18n = trans.qtranslate(novaName);
 
@@ -136,6 +135,7 @@ QString Nova::getInfoString(const StelCore* core, const InfoStringGroup& flags) 
 {
 	QString str;
 	QTextStream oss(&str);
+	double mag = getVMagnitude(core);
 
 	if (flags&Name)
 	{
@@ -148,10 +148,11 @@ QString Nova::getInfoString(const StelCore* core, const InfoStringGroup& flags) 
 
 	if (flags&Magnitude)
 	{
-		double az_app, alt_app;
-		StelUtils::rectToSphe(&az_app,&alt_app,getAltAzPosApparent(core));
-		Q_UNUSED(az_app)
-		oss << getMagnitudeInfoString(core, flags, alt_app, 2);
+		QString emag = "";
+		if (core->getSkyDrawer()->getFlagHasAtmosphere())
+			emag = QString(" (%1: <b>%2</b>)").arg(q_("extincted to"), QString::number(getVMagnitudeWithExtinction(core), 'f', 2));
+
+		oss << QString("%1: <b>%2</b>%3").arg(q_("Magnitude"), QString::number(mag, 'f', 2), emag) << "<br />";
 	}
 
 	// Ra/Dec etc.
@@ -171,6 +172,7 @@ QString Nova::getInfoString(const StelCore* core, const InfoStringGroup& flags) 
 	postProcessInfoString(str, flags);
 	return str;
 }
+
 
 QVariantMap Nova::getInfoMap(const StelCore *core) const
 {
@@ -193,15 +195,15 @@ QVariantMap Nova::getInfoMap(const StelCore *core) const
 
 Vec3f Nova::getInfoColor(void) const
 {
-	return Vec3f(1.f, 1.f, 1.f);
+	return Vec3f(1.0, 1.0, 1.0);
 }
 
 float Nova::getVMagnitude(const StelCore* core) const
 {
 	// OK, start from minimal brightness
-	float vmag = minMagnitude;
+	double vmag = minMagnitude;
 	double currentJD = core->getJDE();
-	float deltaJD = static_cast<float>(qAbs(peakJD-currentJD));
+	double deltaJD = qAbs(peakJD-currentJD);
     
 	// Fill "default" values for mX
 	int t2 = m2;
@@ -294,6 +296,7 @@ float Nova::getVMagnitude(const StelCore* core) const
 
 		if (deltaJD>t9)
 			vmag = minMagnitude;
+
 	}
 	else
 	{
@@ -318,26 +321,31 @@ double Nova::getAngularSize(const StelCore*) const
 
 void Nova::update(double deltaTime)
 {
-	labelsFader.update(static_cast<int>(deltaTime*1000));
+	labelsFader.update((int)(deltaTime*1000));
 }
 
 void Nova::draw(StelCore* core, StelPainter* painter)
 {
 	StelSkyDrawer* sd = core->getSkyDrawer();
-	const float mlimit = sd->getLimitMagnitude();
-	float mag = getVMagnitudeWithExtinction(core);
+	StarMgr* smgr = GETSTELMODULE(StarMgr); // It's need for checking displaying of labels for stars
+
+	Vec3f color = Vec3f(1.f,1.f,1.f);
+	RCMag rcMag;
+	float size, shift;
+	double mag;
+
+	StelUtils::spheToRect(RA, Dec, XYZ);
+	mag = getVMagnitudeWithExtinction(core);
+	sd->preDrawPointSource(painter);
+	float mlimit = sd->getLimitMagnitude();
 
 	if (mag <= mlimit)
 	{
-		Vec3f color(1.f);
-		RCMag rcMag;
 		sd->computeRCMag(mag, &rcMag);
-		sd->preDrawPointSource(painter);
-		sd->drawPointSource(painter, XYZ.toVec3f(), rcMag, color, false);
-		painter->setColor(color, 1.f);
-		float size = getAngularSize(Q_NULLPTR)*M_PI/180.*painter->getProjector()->getPixelPerRadAtCenter();
-		float shift = 6.f + size/1.8f;
-		StarMgr* smgr = GETSTELMODULE(StarMgr); // It's need for checking displaying of labels for stars
+		sd->drawPointSource(painter, Vec3f(XYZ[0],XYZ[1],XYZ[2]), rcMag, color, false);
+		painter->setColor(color[0], color[1], color[2], 1.f);
+		size = getAngularSize(Q_NULLPTR)*M_PI/180.*painter->getProjector()->getPixelPerRadAtCenter();
+		shift = 6.f + size/1.8f;
 		if (labelsFader.getInterstate()<=0.f && (mag+5.f)<mlimit && smgr->getFlagLabels())
 		{
 			QString name = novaName.isEmpty() ? designation : novaName;

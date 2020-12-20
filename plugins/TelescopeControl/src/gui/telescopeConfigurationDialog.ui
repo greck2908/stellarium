@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>535</width>
-    <height>489</height>
+    <height>459</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,7 +22,7 @@
   <property name="minimumSize">
    <size>
     <width>400</width>
-    <height>480</height>
+    <height>450</height>
    </size>
   </property>
   <layout class="QVBoxLayout" name="_2">
@@ -237,14 +237,7 @@
       <item>
        <widget class="QRadioButton" name="radioButtonTelescopeINDI">
         <property name="text">
-         <string notr="true">INDI/INDIGO</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="radioButtonTelescopeASCOM">
-        <property name="text">
-         <string notr="true">ASCOM</string>
+         <string notr="true">INDI</string>
         </property>
        </widget>
       </item>
@@ -279,9 +272,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
+        <y>-348</y>
         <width>519</width>
-        <height>733</height>
+        <height>714</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayoutScrollArea">
@@ -476,22 +469,6 @@
        </item>
        <item>
         <widget class="TelescopeClientINDIWidget" name="INDIProperties" native="true"/>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="ASCOMLayout">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-        </layout>
        </item>
        <item>
         <widget class="QGroupBox" name="groupBoxDeviceSettings">

@@ -127,7 +127,12 @@ public:
 
 private:
 	double m_timeSpan; //time span in julian days
+
 };
+
+
+
+
 
 //! @class gTime
 //! This class implements time calculations.
@@ -138,6 +143,7 @@ private:
 class gTime
 {
 public:
+
 	// Constructors
 	gTime(double ai_jDays = 0);
 	gTime(int year, double day);
@@ -189,6 +195,8 @@ public:
 		m_time = t;
 		return *this;
 	}
+
+
 
 	//////////////////////////////////////
 	// Time Machine getting operations
@@ -296,6 +304,7 @@ public:
 
 private:
 	double m_time; //Time in Julian Days
+
 };
 
 

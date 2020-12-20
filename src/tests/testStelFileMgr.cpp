@@ -26,6 +26,7 @@
 #include <QString>
 #include <QStringList>
 #include <QDebug>
+#include <QTest>
 #include <QRegExp>
 
 #include "StelFileMgr.hpp"
@@ -43,7 +44,7 @@ void TestStelFileMgr::initTestCase()
 		QFAIL(qPrintable("could not set the working directory to: "+workingDir));
 	}
 
-	//qDebug() << "working directory: " << QDir::toNativeSeparators(QDir::currentPath());
+	qDebug() << "working directory: " << QDir::toNativeSeparators(QDir::currentPath());
 
 	// set up a directory hierarchy to test on...
 	testDirs << "data"
@@ -93,7 +94,7 @@ void TestStelFileMgr::initTestCase()
 
 	StelFileMgr::init();
 	StelFileMgr::setSearchPaths(path);
-	//qDebug() << "search paths are:  " << path;
+	qDebug() << "search paths are:  " << path;
 }
 
 void TestStelFileMgr::testFindFileVanilla()
@@ -284,3 +285,4 @@ void TestStelFileMgr::testListContentsDirAbs()
 	resultSetQueryExpected << "ls1" << "ls3";
 	QVERIFY(resultSetQuery==resultSetQueryExpected);
 }
+

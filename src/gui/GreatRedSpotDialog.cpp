@@ -45,6 +45,11 @@ void GreatRedSpotDialog::retranslate()
 		ui->retranslateUi(dialog);
 }
 
+void GreatRedSpotDialog::setVisible(bool v)
+{
+	StelDialog::setVisible(v);
+}
+
 void GreatRedSpotDialog::createDialogContent()
 {
 	ui->setupUi(dialog);
@@ -55,8 +60,11 @@ void GreatRedSpotDialog::createDialogContent()
 	connect(ui->TitleBar, SIGNAL(movedTo(QPoint)), this, SLOT(handleMovedTo(QPoint)));
 
 	SolarSystem* ss = GETSTELMODULE(SolarSystem);
-	connectIntProperty(ui->longitudeSpinBox, "SolarSystem.customGrsLongitude");
-	connectDoubleProperty(ui->driftDoubleSpinBox, "SolarSystem.customGrsDrift");
+	ui->longitudeSpinBox->setValue(ss->getCustomGrsLongitude());
+	connect(ui->longitudeSpinBox, SIGNAL(valueChanged(int)), ss, SLOT(setCustomGrsLongitude(int)));
+
+	ui->driftDoubleSpinBox->setValue(ss->getCustomGrsDrift());
+	connect(ui->driftDoubleSpinBox, SIGNAL(valueChanged(double)), ss, SLOT(setCustomGrsDrift(double)));
 
 	const StelLocaleMgr& locmgr = StelApp::getInstance().getLocaleMgr();
 	QString fmt = QString("%1 hh:mm").arg(locmgr.getQtDateFormatStr());

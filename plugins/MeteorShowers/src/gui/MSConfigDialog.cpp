@@ -51,18 +51,14 @@ void MSConfigDialog::createDialogContent()
 	m_ui->tabs->setCurrentIndex(0);
 
 	// Kinetic scrolling
-	kineticScrollingList << m_ui->about;
-	StelGui* gui= dynamic_cast<StelGui*>(StelApp::getInstance().getGui());
-	if (gui)
-	{
-		enableKineticScrolling(gui->getFlagUseKineticScrolling());
-		connect(gui, SIGNAL(flagUseKineticScrollingChanged(bool)), this, SLOT(enableKineticScrolling(bool)));
-	}
+	QList<QWidget *> addscroll;
+	addscroll << m_ui->about;
+	installKineticScrolling(addscroll);
 
 	connect(&StelApp::getInstance(), SIGNAL(languageChanged()), this, SLOT(retranslate()));
 	connect(m_ui->closeStelWindow, SIGNAL(clicked()), this, SLOT(close()));
 	connect(m_ui->TitleBar, SIGNAL(movedTo(QPoint)), this, SLOT(handleMovedTo(QPoint)));
-	connect(m_ui->bRestoreDefaults, SIGNAL(clicked()), this, SLOT(restoreDefaults()));
+	connect(m_ui->bRestoreDefaults, SIGNAL(clicked()), m_mgr, SLOT(restoreDefaultSettings()));
 
 	// General tab
 	connect(m_ui->enableAtStartUp, SIGNAL(clicked(bool)), m_mgr, SLOT(setEnableAtStartup(bool)));
@@ -91,23 +87,13 @@ void MSConfigDialog::createDialogContent()
 
 	// About tab
 	setAboutHtml();
+	StelGui* gui = dynamic_cast<StelGui*>(StelApp::getInstance().getGui());
 	if (gui)
 	{
 		m_ui->about->document()->setDefaultStyleSheet(QString(gui->getStelStyle().htmlStyleSheet));
 	}
 
 	init();
-}
-
-void MSConfigDialog::restoreDefaults()
-{
-	if (askConfirmation())
-	{
-		qDebug() << "[MeteorShower] restore defaults...";
-		m_mgr->restoreDefaultSettings();
-	}
-	else
-		qDebug() << "[MeteorShower] restore defaults is canceled...";
 }
 
 void MSConfigDialog::init()
@@ -162,51 +148,51 @@ void MSConfigDialog::refreshUpdateTab()
 void MSConfigDialog::refreshMarkersColor()
 {
 	Vec3f c = m_mgr->getColorARG();
-	QColor color(QColor::fromRgbF(c[0], c[1], c[2]));
+	QColor color(c[0], c[1], c[2]);
 	m_ui->setColorARG->setStyleSheet("background-color:" + color.name() + ";");
 
 	c = m_mgr->getColorARC();
-	color = QColor(QColor::fromRgbF(c[0], c[1], c[2]));
+	color = QColor(c[0], c[1], c[2]);
 	m_ui->setColorARC->setStyleSheet("background-color:" + color.name() + ";");
 
 	c = m_mgr->getColorIR();
-	color = QColor(QColor::fromRgbF(c[0], c[1], c[2]));
+	color = QColor(c[0], c[1], c[2]);
 	m_ui->setColorIR->setStyleSheet("background-color:" + color.name() + ";");
 }
 
 void MSConfigDialog::setColorARG()
 {
 	Vec3f c = m_mgr->getColorARG();
-	QColor color(QColor::fromRgbF(c[0], c[1], c[2]));
+	QColor color(c[0], c[1], c[2]);
 	color = QColorDialog::getColor(color);
 	if (color.isValid())
 	{
 		m_ui->setColorARG->setStyleSheet("background-color:" + color.name() + ";");
-		m_mgr->setColorARG(Vec3f(color.redF(), color.greenF(), color.blueF()));
+		m_mgr->setColorARG(Vec3f(color.red(), color.green(), color.blue()));
 	}
 }
 
 void MSConfigDialog::setColorARC()
 {
 	Vec3f c = m_mgr->getColorARC();
-	QColor color(QColor::fromRgbF(c[0], c[1], c[2]));
+	QColor color(c[0], c[1], c[2]);
 	color = QColorDialog::getColor(color);
 	if (color.isValid())
 	{
 		m_ui->setColorARC->setStyleSheet("background-color:" + color.name() + ";");
-		m_mgr->setColorARC(Vec3f(color.redF(), color.greenF(), color.blueF()));
+		m_mgr->setColorARC(Vec3f(color.red(), color.green(), color.blue()));
 	}
 }
 
 void MSConfigDialog::setColorIR()
 {
 	Vec3f c = m_mgr->getColorIR();
-	QColor color(QColor::fromRgbF(c[0], c[1], c[2]));
+	QColor color(c[0], c[1], c[2]);
 	color = QColorDialog::getColor(color);
 	if (color.isValid())
 	{
 		m_ui->setColorIR->setStyleSheet("background-color:" + color.name() + ";");
-		m_mgr->setColorIR(Vec3f(color.redF(), color.greenF(), color.blueF()));
+		m_mgr->setColorIR(Vec3f(color.red(), color.green(), color.blue()));
 	}
 }
 
@@ -337,6 +323,4 @@ void MSConfigDialog::setAboutHtml()
 	html += "</ul></p></body></html>";
 
 	m_ui->about->setHtml(html);
-	// TRANSLATORS: duration
-	m_ui->updateFrequency->setSuffix(qc_(" h","time unit"));
 }

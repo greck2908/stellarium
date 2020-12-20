@@ -43,7 +43,6 @@ public:
 	Vec3d getJ2000EquatorialPos(const StelCore* core=Q_NULLPTR) const;
 
 	void telescopeGoto(const Vec3d &j2000Pos, StelObjectP selectObject);
-	void telescopeSync(const Vec3d &j2000Pos, StelObjectP selectObject);
 	bool hasKnownPosition(void) const;
 
 protected:

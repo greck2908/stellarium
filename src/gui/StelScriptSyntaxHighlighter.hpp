@@ -2,6 +2,8 @@
  * Stellarium
  * Copyright (C) 2009 Matthew Gates
  *
+ * Derived from the QT syntax highlighter example under the GNU GPL.
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -22,8 +24,6 @@
 
 #include <QSyntaxHighlighter>
 #include <QHash>
-#include <QSet>
-#include <QString>
 #include <QTextCharFormat>
 
 class QTextDocument;
@@ -37,10 +37,9 @@ public:
 	void setFormats(void);
 
 protected:
-	virtual void highlightBlock(const QString &text) Q_DECL_OVERRIDE;
+	void highlightBlock(const QString &text);
 
 private:
-	void locateFunctions( const QMetaObject* metaObject, QString scriptName );
 	struct HighlightingRule
 	{
 		QRegExp pattern;
@@ -48,26 +47,11 @@ private:
 	};
 	QVector<HighlightingRule> highlightingRules;
 
-	QRegExp alertPat;
-	QRegExp identPat;
-	QRegExp functionPat;
-	QRegExp multiLineStartPat;
-	QString multiLineEnd;
-
-	QSet<QString> keywords;
-	QSet<QString> predefineds;
-	
-	QHash<QString,QSet<QString>> mod2funcs;
-	QString lastModule;
-
 	QTextCharFormat keywordFormat;
-	QTextCharFormat literalFormat;
-	QTextCharFormat predefFormat;
 	QTextCharFormat moduleFormat;
-	QTextCharFormat methodFormat;
 	QTextCharFormat commentFormat;
+	QTextCharFormat constantFormat;
 	QTextCharFormat functionFormat;
-	QTextCharFormat noMethFormat;
 };
 
 #endif // STELSCRIPTSYNTAXHIGHLIGHTER_HPP

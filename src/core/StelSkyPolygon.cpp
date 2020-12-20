@@ -25,7 +25,7 @@
 #include "StelCore.hpp"
 
 #include <stdexcept>
-#include <cstdio>
+#include <stdio.h>
 #include <QDebug>
 
 void StelSkyPolygon::initCtor()
@@ -126,7 +126,7 @@ void StelSkyPolygon::getTilesToDraw(QMultiMap<double, StelSkyPolygon*>& result, 
 	result.insert(minResolution, this);
 
 	// Check if we reach the resolution limit
-	const double degPerPixel = 1./core->getProjection(StelCore::FrameJ2000)->getPixelPerRadAtCenter()*M_180_PI;
+	const double degPerPixel = 1./core->getProjection(StelCore::FrameJ2000)->getPixelPerRadAtCenter()*180./M_PI;
 	if (degPerPixel < minResolution)
 	{
 		if (subTiles.isEmpty() && !subTilesUrls.isEmpty())

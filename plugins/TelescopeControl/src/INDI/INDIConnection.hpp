@@ -40,12 +40,11 @@ public:
 		bool operator!=(const Coordinates &other) const;
 	};
 
-	INDIConnection(QObject* parent = Q_NULLPTR);
+	INDIConnection(QObject* parent = nullptr);
 	INDIConnection(const INDIConnection& that) = delete;
 
 	Coordinates position() const;
 	void setPosition(Coordinates coords);
-	void syncPosition(Coordinates coords);
 	bool isDeviceConnected() const;
 	const QStringList devices() const;
 	void moveNorth(int speed);
@@ -64,7 +63,7 @@ private:
 	void setSpeed(int speed);
 
 	mutable std::mutex mMutex;
-	INDI::BaseDevice* mTelescope = Q_NULLPTR;	
+	INDI::BaseDevice* mTelescope = nullptr;
 	Coordinates mCoordinates;
 	QStringList mDevices;
 
@@ -81,8 +80,6 @@ public: // from INDI::BaseClient
 	void newMessage(INDI::BaseDevice *dp, int messageID) override;
 	void serverConnected() override;
 	void serverDisconnected(int exit_code) override;
-	void unParkTelescope();
-	//void parkTelescope();
 };
 
 #endif // INDICONNECTION_HPP

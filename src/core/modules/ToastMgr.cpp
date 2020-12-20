@@ -31,9 +31,7 @@
 
 #include <QSettings>
 
-ToastMgr::ToastMgr() :
-	StelModule()
-	, survey(Q_NULLPTR)
+ToastMgr::ToastMgr() : survey(Q_NULLPTR)
 {	
 	setObjectName("ToastMgr");
 	fader = new LinearFader();
@@ -57,7 +55,7 @@ void ToastMgr::init()
 	survey->setParent(this);
 
 	// Hide deep-sky survey by default
-	setFlagShow(conf->value("astro/flag_toast_survey", false).toBool());
+	setFlagSurveyShow(conf->value("astro/flag_toast_survey", false).toBool());
 
 	addAction("actionShow_Toast_Survey", N_("Display Options"), N_("Digitized Sky Survey (TOAST)"), "surveyDisplayed");
 }
@@ -70,7 +68,7 @@ void ToastMgr::deinit()
 
 void ToastMgr::draw(StelCore* core)
 {
-	if (!getFlagShow())
+	if (!getFlagSurveyShow())
 		return;
 
 	StelPainter sPainter(core->getProjection(StelCore::FrameJ2000));
@@ -79,7 +77,7 @@ void ToastMgr::draw(StelCore* core)
 
 void ToastMgr::update(double deltaTime)
 {
-	fader->update(static_cast<int>(deltaTime*1000));
+	fader->update((int)(deltaTime*1000));
 }
 
 /*************************************************************************
@@ -92,7 +90,7 @@ double ToastMgr::getCallOrder(StelModuleActionName actionName) const
 	return 0;
 }
 
-void ToastMgr::setFlagShow(const bool displayed)
+void ToastMgr::setFlagSurveyShow(const bool displayed)
 {
 	if (*fader != displayed)
 	{
@@ -102,7 +100,7 @@ void ToastMgr::setFlagShow(const bool displayed)
 	}
 }
 
-bool ToastMgr::getFlagShow() const
+bool ToastMgr::getFlagSurveyShow() const
 {
 	return *fader;
 }

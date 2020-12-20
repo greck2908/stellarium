@@ -30,7 +30,6 @@
 class TuiNodeEnum : public TuiNodeEditable
 {
 	Q_OBJECT
-
 public:
 	//! Create a TuiNodeEnum node.
 	//! @param text the text to be displayed for this node
@@ -51,7 +50,8 @@ signals:
 private:
 	int currentIdx;
 	QStringList stringList;
-	QString defValue;
+    QString defValue;
+
 };
 
 #endif /*TUINODEENUM_HPP*/

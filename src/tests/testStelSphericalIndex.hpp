@@ -21,7 +21,7 @@
 #define TESTSTELSPHERICALINDEX_HPP
 
 #include <QObject>
-#include <QtTest>
+#include <QTest>
 #include "StelSphereGeometry.hpp"
 #include "StelSphericalIndex.hpp"
 

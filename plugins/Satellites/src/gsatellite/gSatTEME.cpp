@@ -39,7 +39,9 @@
 #include <iostream>
 #include <iomanip>
 
+#include "stdsat.h"
 #include "mathUtils.hpp"
+
 #include "sgp4io.h"
 
 #define CONSTANTS_SET wgs72
@@ -54,6 +56,7 @@
 // Constructors
 gSatTEME::gSatTEME(const char *pstrName, char *pstrTleLine1, char *pstrTleLine2)
 {
+
 	double startmfe, stopmfe, deltamin;
 	double ro[3] = {};
 	double vo[3] = {};
@@ -80,6 +83,7 @@ gSatTEME::gSatTEME(const char *pstrName, char *pstrTleLine1, char *pstrTleLine2)
 
 void gSatTEME::setEpoch(gTime ai_time)
 {
+
 	gTime     kepEpoch(satrec.jdsatepoch);
 	gTimeSpan tSince = ai_time - kepEpoch;
 
@@ -100,6 +104,7 @@ void gSatTEME::setEpoch(gTime ai_time)
 
 void gSatTEME::setMinSinceKepEpoch(double ai_minSinceKepEpoch)
 {
+
 	double ro[3];
 	double vo[3];
 	gTimeSpan tSince( ai_minSinceKepEpoch/KMIN_PER_DAY);
@@ -119,6 +124,7 @@ void gSatTEME::setMinSinceKepEpoch(double ai_minSinceKepEpoch)
 
 Vec3d gSatTEME::computeSubPoint(gTime ai_Time)
 {
+
 	Vec3d resultVector; // (0) Latitude, (1) Longitude, (2) altitude
 	double theta, r, e2, phi, c;
 
@@ -146,6 +152,7 @@ Vec3d gSatTEME::computeSubPoint(gTime ai_Time)
 	resultVector[LONGITUDE] = resultVector[LONGITUDE]/KDEG2RAD;
 	if(resultVector[LONGITUDE] < -180.0) resultVector[LONGITUDE] +=360;
 	else if(resultVector[LONGITUDE] > 180.0) resultVector[LONGITUDE] -= 360;
+
 
 	return resultVector;
 }

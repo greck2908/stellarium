@@ -27,7 +27,6 @@
 class TuiNodeInt : public TuiNodeEditable
 {
 	Q_OBJECT
-
 public:
 	//! Create a TuiNodeInt node.
 	//! @param text the text to be displayed for this node
@@ -58,6 +57,7 @@ private:
 	int maximum;
 	int increment;
 	bool typing;
+	
 };
 
 #endif /*TUINODEINT_HPP*/

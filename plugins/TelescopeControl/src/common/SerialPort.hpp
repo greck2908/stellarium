@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin Street, Suite 500, Boston, MA  02110-1335, USA.
 #include "Connection.hpp"
 
 #ifdef Q_OS_WIN
-  #include <Windows.h>
+  #include <windows.h>
 #else
   #include <termios.h>
 #endif

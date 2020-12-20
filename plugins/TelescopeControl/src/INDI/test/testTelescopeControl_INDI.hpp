@@ -28,6 +28,7 @@ class TestTelescopeControl_INDI : public QObject
     Q_OBJECT
 
 private slots:
+
 };
 
 #endif // TESTTELESCOPECONTROL_INDI_HPP

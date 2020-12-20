@@ -92,9 +92,6 @@ public:
 
 	void update(double deltaTime);
 
-protected:
-	virtual QString getMagnitudeInfoString(const StelCore *core, const InfoStringGroup& flags, const double alt_app, const int decimals=1) const;
-
 private:
 	bool initialized;
 
@@ -107,7 +104,7 @@ private:
 	// Supernova
 	QString designation;               //! The ID of the supernova
 	QString sntype;			   //! Type of the supernova
-	double maxMagnitude;		   //! Maximal visual magnitude
+	float maxMagnitude;		   //! Maximal visual magnitude
 	double peakJD;			   //! Julian Day of max. vis. mag.
 	double snra;			   //! R.A. for the supernova
 	double snde;			   //! Dec. for the supernova

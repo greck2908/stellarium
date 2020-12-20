@@ -39,6 +39,7 @@ public:
 	//! Constructs an invalid response
 	APIServiceResponse() : status(-1)
 	{
+
 	}
 
 	//! Sets a specific HTTP header to the specified value
@@ -153,6 +154,7 @@ public:
 	}
 
 private:
+
 	int status;
 	QByteArray statusText;
 	QMap<QByteArray,QByteArray> headers;

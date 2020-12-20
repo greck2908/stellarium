@@ -43,6 +43,7 @@ namespace INDI
 class RotatorInterface
 {
   public:    
+
     /**
      * \struct RotatorCapability
      * \brief Holds the capabilities of a Rotator.
@@ -87,6 +88,7 @@ class RotatorInterface
     bool CanReverse()  { return rotatorCapability & ROTATOR_CAN_REVERSE;}
 
 protected:
+
     explicit RotatorInterface(DefaultDevice *defaultDevice);
 
     /**

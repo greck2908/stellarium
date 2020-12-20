@@ -22,7 +22,7 @@
 #include <QSettings>
 
 Lens::Lens()
-	: m_multipler(1.)
+	: m_multipler(0.)
 {
 }
 
@@ -96,6 +96,6 @@ Lens* Lens::lensModel()
 {
 	Lens* model = new Lens();
 	model->setName("My Lens");
-	model->setMultipler(2.0);
+	model->setMultipler(2.0f);
 	return model;
 }

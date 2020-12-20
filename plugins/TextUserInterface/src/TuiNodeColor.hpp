@@ -30,7 +30,6 @@
 class TuiNodeColor : public TuiNodeEditable
 {
 	Q_OBJECT
-
 public:
 	//! Create a TuiNodeColor node.
 	//! @param text the text to be displayed for this node
@@ -50,6 +49,7 @@ private:
 	Vec3f value;
 	int editingPart;
 	void incPart(int part, bool add);
+
 };
 
 #endif /*TUINODECOLOR_HPP*/

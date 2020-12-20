@@ -26,6 +26,7 @@
 //! This represents a heightmap for viewer-ground collision
 class Heightmap
 {
+
 public:
 	typedef QVector<unsigned int> IdxList;
 	typedef QVector<Vec3f> PosList;

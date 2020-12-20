@@ -85,7 +85,6 @@ void TelescopeClientINDIWidget::onDevicesChanged()
 
 void TelescopeClientINDIWidget::onServerDisconnected(int code)
 {
-	Q_UNUSED(code)
 	ui->devicesComboBox->clear();
 }
 

@@ -42,8 +42,7 @@ class MilkyWay : public StelModule
 		   WRITE setColor
 		   NOTIFY colorChanged)
 	Q_PROPERTY(double saturation
-		   READ getSaturation
-		   WRITE setSaturation
+		   MEMBER saturation
 		   NOTIFY saturationChanged)
 public:
 	MilkyWay();
@@ -70,16 +69,11 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////////
 	// Setter and getters
 public slots:
-	//! Get Milky Way intensity (brightness).
+	//! Get Milky Way intensity.
 	double getIntensity() const {return intensity;}
 	//! Set Milky Way intensity. Default value: 1.
 	void setIntensity(double aintensity) {if(aintensity!=intensity){ intensity = aintensity; emit intensityChanged(intensity); }}
-
-	//! Get Milky Way saturation (color strength).
-	double getSaturation()const {return saturation;}
-	//! Set Milky Way saturation (color strength).
-	void setSaturation(double sat) {if(sat!=saturation){ saturation = sat; emit saturationChanged(saturation); }}
-
+	
 	//! Get the color used for rendering the Milky Way. It is modulated by intensity, light pollution and atmospheric extinction.
 	Vec3f getColor() const {return color;}
 	//! Sets the color to use for rendering the Milky Way
@@ -105,9 +99,9 @@ private:
 	StelTextureSP tex;
 	Vec3f color; // global color
 	double intensity;
-	double intensityFovScale; // like for constellations: reduce brightness when zooming in.
-	double intensityMinFov;
-	double intensityMaxFov;
+	float intensityFovScale; // like for constellations: reduce brightness when zooming in.
+	float intensityMinFov;
+	float intensityMaxFov;
 	class LinearFader* fader;
 	double saturation = 1.0;
 

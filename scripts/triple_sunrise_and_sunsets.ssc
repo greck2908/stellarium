@@ -1,26 +1,20 @@
 //
 // Author: Qam1
 // Name: Mercury Triple Sunrise and Sunset
-// Version: 2.1
+// Version: 2.0
 // License: Public Domain
 // Description: Due to the quirks in Mercury's orbit and rotation at certain spots the sun will rise & set 3 different times in one Mercury day.
 //
-
-include("i18n.inc");
 
 var r = 1
 var long = 90;
 var ds = 2455361;
 
-core.setObserverLocation(90.0, 0.00, 1, 1, "", "Mercury");
-
-var locTxt = LabelMgr.labelScreen(tr("Location: Mercury, 0N, 90E"), 10, 10, false, 15, "#F9E397");
-LabelMgr.setLabelShow(locTxt, true);
+core.setObserverLocation(90.0, -0.00, 1, 1, "", "Mercury");
 
 LandscapeMgr.setFlagAtmosphere(false);
 LandscapeMgr.setFlagFog(false);
 LandscapeMgr.setCurrentLandscapeID("ocean");
-core.setGuiVisible(false);
 
 var y = core.getScreenHeight()/768;
 var x = core.getScreenWidth()/1024;
@@ -29,7 +23,8 @@ core.selectObjectByName("Sun", pointer = true);
 StelMovementMgr.setFlagTracking(true);
 StelMovementMgr.zoomTo(50, 1);
 
-var d = 0;
+var d = 0
+
 while (r == 1)
 {
 	d = d + 1;
@@ -48,13 +43,15 @@ while (r == 1)
 
 	core.setJDay(ds);
 
-	var txt1 = LabelMgr.labelScreen(tr("Just Before Sunrise....."), 620*x, 10, false, 20, "#F9E397");
+
+
+	var txt1 = LabelMgr.labelScreen("Just Before Sunrise.....", 620*x, 10, false, 20, "#F9E397");
 	LabelMgr.setLabelShow(txt1, true);
 
-	txt1 = LabelMgr.labelScreen(tr("Surface of Mercury"), 640*x, 35, false, 20, "#F9E397");
+	txt1 = LabelMgr.labelScreen("Surface of Mercury", 640*x, 35, false, 20, "#F9E397");
 	LabelMgr.setLabelShow(txt1, true);
 
-	txt1 = LabelMgr.labelScreen(tr("Day"), 660*x, 60, false, 20, "#F0F0F0");
+	txt1 = LabelMgr.labelScreen("Day", 660*x, 60, false, 20, "#F0F0F0");
 	LabelMgr.setLabelShow(txt1, true);
 
 	txt1 = LabelMgr.labelScreen(d, 720*x, 60, false, 20, "#F0F0F0");
@@ -63,33 +60,35 @@ while (r == 1)
 	core.setTimeRate(0);
 	core.wait(1);
 
-	var SunData = core.getObjectInfo("Sun");
+	var SunData = core.getObjectPosition("Sun");
 	var SunAlt = SunData["altitude"];
+	core.setTimeRate(0);
 
 	while (SunAlt > -2)
 	{
-		core.setDate("-1 day");
-		SunData = core.getObjectInfo("Sun");
+		core.setDate("-1 days");
+		SunData = core.getObjectPosition("Sun");
 		SunAlt = SunData["altitude"];
 		core.wait(0.01);
 	}
 
-	npcc = 0;
+	npcc = 0	
 
-	var ctr = core.getTimeRate();
-	core.setTimeRate(30000);
 	while (SunAlt < 0)
 	{
 		core.wait(0.01);
-		SunData = core.getObjectInfo("Sun");
+		SunData = core.getObjectPosition("Sun");
 		SunAlt = SunData["altitude"];
+		core.setTimeRate(30000);
+
+
+
 	}
-	core.setTimeRate(ctr);
 
 	StelMovementMgr.zoomTo(10, 1);
 	LabelMgr.deleteAllLabels();
 
-	txt1 = LabelMgr.labelScreen(tr("Sunrise #1"), 600*x, 10, false, 20, "#F9E397");
+	txt1 = LabelMgr.labelScreen("Sunrise #1", 600*x, 10, false, 20, "#F9E397");
 	LabelMgr.setLabelShow(txt1, true);
 
 	core.setTimeRate(0);
@@ -104,7 +103,7 @@ while (r == 1)
 	while (lt == 0)
 	{
 		core.wait(0.01);
-		SunData = core.getObjectInfo("Sun");
+		SunData = core.getObjectPosition("Sun");
 		SunAlt = SunData["altitude"];
 
 		if (SunAlt < ls)
@@ -117,7 +116,7 @@ while (r == 1)
 	core.setTimeRate(30000);
 	LabelMgr.deleteAllLabels();
 
-	txt1 = LabelMgr.labelScreen(tr("Retro"), 600*x, 10, false, 15, "#F9E397");
+	txt1 = LabelMgr.labelScreen("Retro", 600*x, 10, false, 15, "#F9E397");
 	LabelMgr.setLabelShow(txt1, true);
 
 	lt = 0;
@@ -126,7 +125,7 @@ while (r == 1)
 	while (lt == 0)
 	{
 		core.wait(0.01);
-		SunData = core.getObjectInfo("Sun");
+		SunData = core.getObjectPosition("Sun");
 		SunAlt = SunData["altitude"];
 
 		if (ls < SunAlt)
@@ -138,7 +137,7 @@ while (r == 1)
 
 	LabelMgr.deleteAllLabels();
 
-	txt1 = LabelMgr.labelScreen(tr("Sunset #1"), 600*x, 10, false, 20, "#F9E397");
+	txt1 = LabelMgr.labelScreen("Sunset #1", 600*x, 10, false, 20, "#F9E397");
 	LabelMgr.setLabelShow(txt1, true);
 
 	core.setTimeRate(10);
@@ -146,17 +145,15 @@ while (r == 1)
 	core.setTimeRate(30000);
 	LabelMgr.deleteAllLabels();
 
-	var ctr = core.getTimeRate();
-	core.setTimeRate(30000);
 	while (SunAlt < 0)
 	{
 		core.wait(0.01);
-		SunData = core.getObjectInfo("Sun");
+		SunData = core.getObjectPosition("Sun");
 		SunAlt = SunData["altitude"];
+		core.setTimeRate(30000);
 	}
-	core.setTimeRate(ctr);
 
-	txt1 = LabelMgr.labelScreen(tr("Sunrise #2"), 600*x, 10, false, 20, "#F9E397");
+	txt1 = LabelMgr.labelScreen("Sunrise #2", 600*x, 10, false, 20, "#F9E397");
 	LabelMgr.setLabelShow(txt1, true);
 
 	core.setTimeRate(30000);
@@ -164,13 +161,13 @@ while (r == 1)
 	while (SunAlt < 5)
 	{
 		core.wait(0.01);
-		SunData = core.getObjectInfo("Sun");
+		SunData = core.getObjectPosition("Sun");
 		SunAlt = SunData["altitude"];
 	}
 
 	LabelMgr.deleteAllLabels();
 
-	txt1 = LabelMgr.labelScreen(tr("Later in the afternoon"), 600*x, 10, false, 20, "#F9E397");
+	txt1 = LabelMgr.labelScreen("Later in the afternoon", 600*x, 10, false, 20, "#F9E397");
 	LabelMgr.setLabelShow(txt1, true);
 
 	StelMovementMgr.zoomTo(120, 1);
@@ -179,9 +176,9 @@ while (r == 1)
 	while (SunAlt > 5)
 	{
 		core.wait(0.1);
-		SunData = core.getObjectInfo("Sun");
+		SunData = core.getObjectPosition("Sun");
 		SunAlt = SunData["altitude"];
-		core.setDate("+1 day");
+		core.setDate("+1 days");
 	}
 
 	if (SunAlt < 2)
@@ -191,18 +188,21 @@ while (r == 1)
 
 	StelMovementMgr.zoomTo(10, 1);
 
-	ctr = core.getTimeRate();
-	core.setTimeRate(20000);
-	while (SunAlt > 0)
+
+while (SunAlt > 0)
 	{
 		core.wait(0.1);
-		SunData = core.getObjectInfo("Sun");
+		SunData = core.getObjectPosition("Sun");
 		SunAlt = SunData["altitude"] - 0.5;
-	}
-	core.setTimeRate(ctr);
-	LabelMgr.deleteAllLabels();
+		core.setTimeRate(20000);
 
-	txt1 = LabelMgr.labelScreen(tr("Sunset #2"), 600*x, 10, false, 20, "#F9E397");
+	}
+	
+
+
+LabelMgr.deleteAllLabels();
+
+	txt1 = LabelMgr.labelScreen("Sunset #2", 600*x, 10, false, 20, "#F9E397");
 	LabelMgr.setLabelShow(txt1, true);
 
 	core.setTimeRate(10);
@@ -210,19 +210,21 @@ while (r == 1)
 	core.setTimeRate(20000);
 	LabelMgr.deleteAllLabels();
 
-	npcc = 0;
+	npcc = 0
 
-	ctr = core.getTimeRate();
-	core.setTimeRate(20000);
 	while (SunAlt <0.5 )
 	{
 		core.wait(0.1);
-		SunData = core.getObjectInfo("Sun");
+		SunData = core.getObjectPosition("Sun");
 		SunAlt = SunData["altitude"];
-	}
-	core.setTimeRate(ctr);
+		core.setTimeRate(20000);
+	
 
-	txt1 = LabelMgr.labelScreen(tr("Sunrise #3"), 600*x, 10, false, 20, "#F9E397");
+	
+
+	}
+
+	txt1 = LabelMgr.labelScreen("Sunrise #3", 600*x, 10, false, 20, "#F9E397");
 	LabelMgr.setLabelShow(txt1, true);
 
 	core.setTimeRate(10);
@@ -230,18 +232,17 @@ while (r == 1)
 	core.setTimeRate(20000);
 	LabelMgr.deleteAllLabels();
 
-	ctr = core.getTimeRate();
-	core.setTimeRate(30000);
 	while (SunAlt > -0.2)
+
 	{
 		
 		core.wait(0.1);
-		SunData = core.getObjectInfo("Sun");
+		SunData = core.getObjectPosition("Sun");
 		SunAlt = SunData["altitude"];
+		core.setTimeRate(30000);
 	}
-	core.setTimeRate(ctr);
 
-	txt1 = LabelMgr.labelScreen(tr("Sunset #3"), 600*x, 10, false, 20, "#F9E397");
+	txt1 = LabelMgr.labelScreen("Sunset #3", 600*x, 10, false, 20, "#F9E397");
 	LabelMgr.setLabelShow(txt1, true);
 
 	core.setTimeRate(10);
@@ -253,7 +254,7 @@ while (r == 1)
 
 	for(c=1; c<66; c++)
 	{
-		core.setDate("+1 day");
+		core.setDate("+1 days");
 		core.wait(0.1);
 	}
 
@@ -267,5 +268,5 @@ while (r == 1)
 	}
 }
 
-core.setGuiVisible(true);
 core.goHome();
+

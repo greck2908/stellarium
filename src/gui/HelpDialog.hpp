@@ -23,13 +23,13 @@
 #include <QString>
 #include <QObject>
 #include <QSettings>
-#include <QNetworkReply>
 
 #include "StelDialog.hpp"
 
 class Ui_helpDialogForm;
 class QListWidgetItem;
 class QNetworkAccessManager;
+class QNetworkReply;
 
 class HelpDialog : public StelDialog
 {
@@ -46,17 +46,18 @@ public:
 	};
 
 	HelpDialog(QObject* parent);
-	~HelpDialog() Q_DECL_OVERRIDE;
+	~HelpDialog();
 
 	//! Notify that the application style changed
-	virtual void styleChanged() Q_DECL_OVERRIDE;
+	void styleChanged();
+
 
 public slots:
-	virtual void retranslate() Q_DECL_OVERRIDE;
+	void retranslate();	
 
 protected:
 	//! Initialize the dialog widgets and connect the signals/slots
-	virtual void createDialogContent() Q_DECL_OVERRIDE;
+	virtual void createDialogContent();
 
 	Ui_helpDialogForm* ui;
 
@@ -77,19 +78,19 @@ private slots:
 	void updateLog(int);
 
 	//! Updated text in Help tab.
-	void updateHelpText(void) const;
+	void updateHelpText(void);
 
 	//! Updated text in About tab.
-	void updateAboutText(void) const;
+	void updateAboutText(void);
 
 	//! Sync the displayed log.
-	void refreshLog() const;
+	void refreshLog();
 
 	void changePage(QListWidgetItem *current, QListWidgetItem *previous);
 
 	void checkUpdates(void);
 	void downloadComplete(QNetworkReply * reply);
-	void setKeyButtonState(bool state);
+
 };
 
 #endif /*_HELPDIALOG_HPP*/

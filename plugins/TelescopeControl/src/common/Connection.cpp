@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin Street, Suite 500, Boston, MA  02110-1335, USA.
 #include "Connection.hpp"
 #include "Server.hpp"
 #include "LogFile.hpp"
-#include "StelUtils.hpp"
 
 using namespace std;
 
@@ -44,7 +43,7 @@ struct PrintRaDec
 static QTextStream &operator<<(QTextStream &o, const PrintRaDec &x)
 {
 	unsigned int h = x.ra_int;
-	int d = static_cast<int>(floor(0.5+x.dec_int*(360*3600*1000/4294967296.0)));
+	int d = (int)floor(0.5+x.dec_int*(360*3600*1000/4294967296.0));
 	char dec_sign;
 	if (d >= 0)
 	{
@@ -65,7 +64,7 @@ static QTextStream &operator<<(QTextStream &o, const PrintRaDec &x)
 		d = -d;
 		dec_sign = '-';
 	}
-	h = static_cast<unsigned int>(floor(0.5+h*(24*3600*10000/4294967296.0)));
+	h = (unsigned int)floor(0.5+h*(24*3600*10000/4294967296.0));
 	const int ra_ms = h % 10000; h /= 10000;
 	const int ra_s = h % 60; h /= 60;
 	const int ra_m = h % 60; h /= 60;
@@ -103,8 +102,8 @@ void Connection::prepareSelectFds(fd_set &read_fds,
 {
 	if (!IS_INVALID_SOCKET(fd))
 	{
-		if (fd_max < static_cast<int>(fd))
-			fd_max = static_cast<int>(fd);
+		if (fd_max < (int)fd)
+			fd_max = (int)fd;
 		if (write_buff_end > write_buff)
 			FD_SET(fd, &write_fds);
 		FD_SET(fd, &read_fds);
@@ -130,14 +129,14 @@ void Connection::handleSelectFds(const fd_set &read_fds,
 
 void Connection::performWriting(void)
 {
-	const qint64 to_write = write_buff_end - write_buff;
-	const int rc = writeNonblocking(write_buff, static_cast<int>(to_write));
+	const int to_write = write_buff_end - write_buff;
+	const int rc = writeNonblocking(write_buff, to_write);
 	if (rc < 0)
 	{
 		if (ERRNO != EINTR && ERRNO != EAGAIN)
 		{
 			*log_file << Now() << "Connection::performWriting: writeNonblocking failed: "
-					   << STRERROR(ERRNO) << StelUtils::getEndLineChar();
+			                   << STRERROR(ERRNO) << endl;
 		hangup();
 		}
 	}
@@ -151,7 +150,7 @@ void Connection::performWriting(void)
 			                   << rc << "; ";
 			for (int i = 0; i < rc; i++)
 				*log_file << write_buff[i];
-			*log_file << StelUtils::getEndLineChar();
+			*log_file << endl;
 		}
 	#endif
 		if (rc >= to_write)
@@ -162,7 +161,7 @@ void Connection::performWriting(void)
 		else
 		{
 			// partly written
-			memmove(write_buff, write_buff + rc, static_cast<size_t>(to_write - rc));
+			memmove(write_buff, write_buff + rc, to_write - rc);
 			write_buff_end -= rc;
 		}
 	}
@@ -170,20 +169,20 @@ void Connection::performWriting(void)
 
 void Connection::performReading(void)
 {
-	const qint64 to_read = read_buff + sizeof(read_buff) - read_buff_end;
-	const int rc = readNonblocking(read_buff_end, static_cast<int>(to_read));
+	const int to_read = read_buff + sizeof(read_buff) - read_buff_end;
+	const int rc = readNonblocking(read_buff_end, to_read);
 	if (rc < 0)
 	{
 		if (ERRNO == ECONNRESET)
 		{
 			*log_file << Now() << "Connection::performReading: "
-					      "client has closed the connection" << StelUtils::getEndLineChar();
+			                      "client has closed the connection" << endl;
 			hangup();
 		} 
 		else if (ERRNO != EINTR && ERRNO != EAGAIN)
 		{
 			*log_file << Now() << "Connection::performReading: readNonblocking failed: "
-					   << STRERROR(ERRNO) << StelUtils::getEndLineChar();
+			                   << STRERROR(ERRNO) << endl;
 			hangup();
 		}
 	} 
@@ -192,7 +191,7 @@ void Connection::performReading(void)
 		if (isTcpConnection())
 		{
 			*log_file << Now() << "Connection::performReading: "
-					      "client has closed the connection" << StelUtils::getEndLineChar();
+			                      "client has closed the connection" << endl;
 			hangup();
 		}
 	}
@@ -205,7 +204,7 @@ void Connection::performReading(void)
 			                   << rc << "; ";
 			for (int i = 0; i < rc; i++)
 				*log_file << read_buff_end[i];
-			*log_file << StelUtils::getEndLineChar();
+			*log_file << endl;
 		}
 	#endif
 	
@@ -215,15 +214,15 @@ void Connection::performReading(void)
 		if (p >= read_buff_end)
 		{
 			// everything handled
-			//*log_file << Now() << "Connection::performReading: everything handled" << StelUtils::getEndLineChar();
+			//*log_file << Now() << "Connection::performReading: everything handled" << endl;
 			read_buff_end = read_buff;
 		}
 		else if (p > read_buff)
 		{
 			//*log_file << Now() << "Connection::performReading: partly handled: "
-			//          << (p-read_buff) << StelUtils::getEndLineChar();
+			//          << (p-read_buff) << endl;
 			// partly handled
-			memmove(read_buff, p, static_cast<size_t>(read_buff_end - p));
+			memmove(read_buff, p, read_buff_end - p);
 			read_buff_end -= (p - read_buff);
 		}
 	}
@@ -233,12 +232,12 @@ void Connection::dataReceived(const char *&p, const char *read_buff_end)
 {
 	while (read_buff_end - p >= 2)
 	{
-		const int size = static_cast<int>( (static_cast<unsigned char>(p[0])) |
-					((static_cast<unsigned int>(static_cast<unsigned char>(p[1]))) << 8) );
-		if (size > static_cast<int>(sizeof(read_buff)) || size < 4)
+		const int size = (int)( ((unsigned char)(p[0])) |
+		                        (((unsigned int)(unsigned char)(p[1])) << 8) );
+		if (size > (int)sizeof(read_buff) || size < 4)
 		{
 			*log_file << Now() << "Connection::dataReceived: "
-					      "bad packet size: " << size << StelUtils::getEndLineChar();
+		                              "bad packet size: " << size << endl;
 			hangup();
 			return;
 		}
@@ -247,8 +246,8 @@ void Connection::dataReceived(const char *&p, const char *read_buff_end)
 			// wait for complete packet
 			break;
 		}
-		const int type = static_cast<int>( (static_cast<unsigned char>(p[2])) |
-					((static_cast<unsigned int>(static_cast<unsigned char>(p[3]))) << 8) );
+		const int type = (int)( ((unsigned char)(p[2])) |
+		                        (((unsigned int)(unsigned char)(p[3])) << 8) );
 		// dispatch:
 		switch (type)
 		{
@@ -258,34 +257,34 @@ void Connection::dataReceived(const char *&p, const char *read_buff_end)
 				if (size < 12)
 				{
 					*log_file << Now() << "Connection::dataReceived: "
-							      "type 0: bad packet size: " << size << StelUtils::getEndLineChar();
+					                      "type 0: bad packet size: " << size << endl;
 					hangup();
 					return;
 				}
-				const long long int client_micros = static_cast<long long int>
-					       (  (static_cast<unsigned long long int>(static_cast<unsigned char>(p[ 4]))) |
-						 ((static_cast<unsigned long long int>(static_cast<unsigned char>(p[ 5]))) <<  8) |
-						 ((static_cast<unsigned long long int>(static_cast<unsigned char>(p[ 6]))) << 16) |
-						 ((static_cast<unsigned long long int>(static_cast<unsigned char>(p[ 7]))) << 24) |
-						 ((static_cast<unsigned long long int>(static_cast<unsigned char>(p[ 8]))) << 32) |
-						 ((static_cast<unsigned long long int>(static_cast<unsigned char>(p[ 9]))) << 40) |
-						 ((static_cast<unsigned long long int>(static_cast<unsigned char>(p[10]))) << 48) |
-						 ((static_cast<unsigned long long int>(static_cast<unsigned char>(p[11]))) << 56) );
+				const long long int client_micros = (long long int)
+				               (  ((unsigned long long int)(unsigned char)(p[ 4])) |
+				                 (((unsigned long long int)(unsigned char)(p[ 5])) <<  8) |
+				                 (((unsigned long long int)(unsigned char)(p[ 6])) << 16) |
+				                 (((unsigned long long int)(unsigned char)(p[ 7])) << 24) |
+				                 (((unsigned long long int)(unsigned char)(p[ 8])) << 32) |
+				                 (((unsigned long long int)(unsigned char)(p[ 9])) << 40) |
+				                 (((unsigned long long int)(unsigned char)(p[10])) << 48) |
+				                 (((unsigned long long int)(unsigned char)(p[11])) << 56) );
 				server_minus_client_time = GetNow() - client_micros;
 				const unsigned int ra_int =
-					       (   static_cast<unsigned int>(static_cast<unsigned char>(p[12])) |
-						 ((static_cast<unsigned int>(static_cast<unsigned char>(p[13]))) <<  8) |
-						 ((static_cast<unsigned int>(static_cast<unsigned char>(p[14]))) << 16) |
-						 ((static_cast<unsigned int>(static_cast<unsigned char>(p[15]))) << 24) );
-				const int dec_int = static_cast<int>
-					       (  (static_cast<unsigned int>(static_cast<unsigned char>(p[16]))) |
-						 ((static_cast<unsigned int>(static_cast<unsigned char>(p[17]))) <<  8) |
-						 ((static_cast<unsigned int>(static_cast<unsigned char>(p[18]))) << 16) |
-						 ((static_cast<unsigned int>(static_cast<unsigned char>(p[19]))) << 24) );
+				                  ((unsigned int)(unsigned char)(p[12])) |
+				                 (((unsigned int)(unsigned char)(p[13])) <<  8) |
+				                 (((unsigned int)(unsigned char)(p[14])) << 16) |
+				                 (((unsigned int)(unsigned char)(p[15])) << 24);
+				const int dec_int =
+				          (int)(  ((unsigned int)(unsigned char)(p[16])) |
+				                 (((unsigned int)(unsigned char)(p[17])) <<  8) |
+				                 (((unsigned int)(unsigned char)(p[18])) << 16) |
+				                 (((unsigned int)(unsigned char)(p[19])) << 24) );
 				#ifdef DEBUG5
 				*log_file << Now() << "Connection::dataReceived: "
 				                   << PrintRaDec(ra_int, dec_int)
-						   << StelUtils::getEndLineChar();
+				                   << endl;
 				#endif
 				
 				server.gotoReceived(ra_int, dec_int);
@@ -298,7 +297,7 @@ void Connection::dataReceived(const char *&p, const char *read_buff_end)
 				          << "Connection::dataReceived: "
 				             "ignoring unknown packet, type: "
 				          << type
-					  << StelUtils::getEndLineChar();
+				          << endl;
 			break;
 		}
 		
@@ -313,9 +312,9 @@ void Connection::sendPosition(unsigned int ra_int, int dec_int, int status)
 	#ifdef DEBUG5
 		*log_file << Now() << "Connection::sendPosition: "
 		                   << PrintRaDec(ra_int, dec_int)
-				   << StelUtils::getEndLineChar();
+		                   << endl;
 	#endif
-	if (write_buff_end - write_buff + 24 < static_cast<int>(sizeof(write_buff)))
+	if (write_buff_end - write_buff + 24 < (int)sizeof(write_buff))
 	{
 		// length of packet:
 		*write_buff_end++ = 24;
@@ -325,35 +324,35 @@ void Connection::sendPosition(unsigned int ra_int, int dec_int, int status)
 		*write_buff_end++ = 0;
 		// server_micros:
 		long long int now = GetNow();
-		*write_buff_end++ = static_cast<char>(now & 0xFF); now>>=8;
-		*write_buff_end++ = static_cast<char>(now & 0xFF); now>>=8;
-		*write_buff_end++ = static_cast<char>(now & 0xFF); now>>=8;
-		*write_buff_end++ = static_cast<char>(now & 0xFF); now>>=8;
-		*write_buff_end++ = static_cast<char>(now & 0xFF); now>>=8;
-		*write_buff_end++ = static_cast<char>(now & 0xFF); now>>=8;
-		*write_buff_end++ = static_cast<char>(now & 0xFF); now>>=8;
-		*write_buff_end++ = static_cast<char>(now & 0xFF);
+		*write_buff_end++ = now; now>>=8;
+		*write_buff_end++ = now; now>>=8;
+		*write_buff_end++ = now; now>>=8;
+		*write_buff_end++ = now; now>>=8;
+		*write_buff_end++ = now; now>>=8;
+		*write_buff_end++ = now; now>>=8;
+		*write_buff_end++ = now; now>>=8;
+		*write_buff_end++ = now;
 		// ra:
-		*write_buff_end++ = static_cast<char>(ra_int & 0xFF); ra_int>>=8;
-		*write_buff_end++ = static_cast<char>(ra_int & 0xFF); ra_int>>=8;
-		*write_buff_end++ = static_cast<char>(ra_int & 0xFF); ra_int>>=8;
-		*write_buff_end++ = static_cast<char>(ra_int & 0xFF);
+		*write_buff_end++ = ra_int; ra_int>>=8;
+		*write_buff_end++ = ra_int; ra_int>>=8;
+		*write_buff_end++ = ra_int; ra_int>>=8;
+		*write_buff_end++ = ra_int;
 		// dec:
-		*write_buff_end++ = static_cast<char>(dec_int & 0xFF); dec_int>>=8;
-		*write_buff_end++ = static_cast<char>(dec_int & 0xFF); dec_int>>=8;
-		*write_buff_end++ = static_cast<char>(dec_int & 0xFF); dec_int>>=8;
-		*write_buff_end++ = static_cast<char>(dec_int & 0xFF);
+		*write_buff_end++ = dec_int; dec_int>>=8;
+		*write_buff_end++ = dec_int; dec_int>>=8;
+		*write_buff_end++ = dec_int; dec_int>>=8;
+		*write_buff_end++ = dec_int;
 		// status:
-		*write_buff_end++ = static_cast<char>(status & 0xFF); status>>=8;
-		*write_buff_end++ = static_cast<char>(status & 0xFF); status>>=8;
-		*write_buff_end++ = static_cast<char>(status & 0xFF); status>>=8;
-		*write_buff_end++ = static_cast<char>(status & 0xFF);
+		*write_buff_end++ = status; status>>=8;
+		*write_buff_end++ = status; status>>=8;
+		*write_buff_end++ = status; status>>=8;
+		*write_buff_end++ = status;
 		}
 		else
 		{
 			*log_file << Now() << "Connection::sendPosition: "
 			                      "communication is too slow, I will ignore this command"
-					   << StelUtils::getEndLineChar();
+			                   << endl;
 		}
 	}
 }

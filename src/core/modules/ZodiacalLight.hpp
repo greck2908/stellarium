@@ -26,7 +26,6 @@
 #include "VecMath.hpp"
 #include "StelTextureTypes.hpp"
 #include "StelLocation.hpp"
-#include "StelPropertyMgr.hpp"
 
 //! @class ZodiacalLight 
 //! Manages the displaying of the Zodiacal Light. The brightness values follow the paper:
@@ -116,7 +115,7 @@ public slots:
 
 private slots:
 	//! connect to StelCore to force-update ZL.
-	void handleLocationChanged(const StelLocation &loc);
+	void handleLocationChanged(StelLocation loc);
 
 signals:
 	void zodiacalLightDisplayedChanged(const bool displayed);
@@ -124,13 +123,12 @@ signals:
 	void colorChanged(Vec3f color);
 	
 private:
-	StelPropertyMgr* propMgr;
 	StelTextureSP tex;
 	Vec3f color; // global color
 	double intensity;
-	double intensityFovScale; // like for constellations: reduce brightness when zooming in.
-	double intensityMinFov;
-	double intensityMaxFov;
+	float intensityFovScale; // like for constellations: reduce brightness when zooming in.
+	float intensityMinFov;
+	float intensityMaxFov;
 	class LinearFader* fader;
 	double lastJD; // keep date of last computation. Position will be updated only if far enough away from last computation.
 

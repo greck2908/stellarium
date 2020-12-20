@@ -43,9 +43,8 @@ StelTexture::~StelTexture()
 {
 	if (id != 0)
 	{
-		/// FS: make sure the correct GL context is bound!
-		/// Causes #595 flicker in Night Mode with DSS/HiPS. Tentatively remove this.
-		//StelApp::getInstance().ensureGLContextCurrent();
+		//make sure the correct GL context is bound!
+		StelApp::getInstance().ensureGLContextCurrent();
 
 		if (gl->glIsTexture(id)==GL_FALSE)
 		{
@@ -159,7 +158,7 @@ StelTexture::GLData StelTexture::loadFromData(const QByteArray& data)
  Bind the texture so that it can be used for openGL drawing (calls glBindTexture)
  *************************************************************************/
 
-bool StelTexture::bind(uint slot)
+bool StelTexture::bind(int slot)
 {
 	if (id != 0)
 	{
@@ -304,8 +303,8 @@ QByteArray StelTexture::convertToGLFormat(const QImage& image, GLint *format, GL
 	int ipl = tmp.bytesPerLine() / 4;
 	for (int y = 0; y < height / 2; ++y)
 	{
-		int *a = reinterpret_cast<int *>(tmp.scanLine(y));
-		int *b = reinterpret_cast<int *>(tmp.scanLine(height - y - 1));
+		int *a = (int *) tmp.scanLine(y);
+		int *b = (int *) tmp.scanLine(height - y - 1);
 		for (int x = 0; x < ipl; ++x)
 			qSwap(a[x], b[x]);
 	}
@@ -314,11 +313,11 @@ QByteArray StelTexture::convertToGLFormat(const QImage& image, GLint *format, GL
 	// we always use a tightly packed format, with 1-4 bpp
 	for (int i = 0; i < height; ++i)
 	{
-		uint *p = reinterpret_cast<uint *>( tmp.scanLine(i));
+		uint *p = (uint *) tmp.scanLine(i);
 		for (int x = 0; x < width; ++x)
 		{
 			uint c = qToBigEndian(p[x]);
-			const char* ptr = reinterpret_cast<const char*>(&c);
+			const char* ptr = (const char*)&c;
 			switch (*format)
 			{
 				case GL_RGBA:
@@ -354,9 +353,8 @@ bool StelTexture::glLoad(const GLData& data)
 	width = data.width;
 	height = data.height;
 
-	/// FS: make sure the correct GL context is bound!
-	/// Causes #595 flicker in Night Mode with DSS/HiPS. Tentatively remove this.
-	//StelApp::getInstance().ensureGLContextCurrent();
+	//make sure the correct GL context is bound!
+	StelApp::getInstance().ensureGLContextCurrent();
 	gl = QOpenGLContext::currentContext()->functions();
 
 	//check minimum texture size
@@ -400,11 +398,11 @@ bool StelTexture::glLoad(const GLData& data)
 	}
 
 	//do pixel transfer
-	gl->glTexImage2D(GL_TEXTURE_2D, 0, data.format, width, height, 0, static_cast<GLenum>(data.format),
-			 static_cast<GLenum>(data.type), data.data.constData());
+	gl->glTexImage2D(GL_TEXTURE_2D, 0, data.format, width, height, 0, data.format,
+			 data.type, data.data.constData());
 
 	//for now, assume full sized 8 bit GL formats used internally
-	glSize = static_cast<uint>(data.data.size());
+	glSize = data.data.size();
 
 #ifndef NDEBUG
 	if (qApp->property("verbose") == true)

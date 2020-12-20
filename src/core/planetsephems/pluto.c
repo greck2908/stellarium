@@ -209,16 +209,19 @@ static const struct pluto_radius radius[PLUTO_COEFFS] = {
 };
 
 /* Transform spheric coordinate in rectangular */
-void sphe_to_rect(const double lng, const double lat, const double r, double *x, double *y, double *z)
+void sphe_to_rect(double lng, double lat, double r, double *x, double *y, double *z)
 {
-	const double cosLat = cos(lat);
-	(*x) = r * cos(lng) * cosLat;
-	(*y) = r * sin(lng) * cosLat;
-	(*z) = r * sin(lat);
+	double cosLat = cos(lat);
+    (*x) = cos(lng) * cosLat;
+    (*y) = sin(lng) * cosLat;
+	(*z) = sin(lat);
+	(*x)*=r;
+	(*y)*=r;
+	(*z)*=r;
 }
 
 /*
- Meeus, Astron. Algorithms 2nd ed (1998). Chap 37. Equ 37.1
+ Chap 37. Equ 37.1
  params : Julian day, Longitude, Latitude, Radius
 
  Calculate Pluto heliocentric ecliptical coordinates for given julian day.
@@ -230,17 +233,20 @@ void sphe_to_rect(const double lng, const double lat, const double r, double *x,
 void get_pluto_helio_coords (double JD, double * X, double * Y, double * Z)
 {
 	double sum_longitude = 0, sum_latitude = 0, sum_radius = 0;
-	double a, sin_a, cos_a;
+	double J, S, P;
+	double t, a, sin_a, cos_a;
 	int i;
 	double L, B, R;
 
 	/* get julian centuries since J2000 */
-	const double t = (JD - 2451545) / 36525;
+	t = (JD - 2451545) / 36525;
 	
 	/* calculate mean longitudes for jupiter, saturn and pluto */
-	const double J =  34.35 + 3034.9057 * t;
-	const double S =  50.08 + 1222.1138 * t;
-	const double P = 238.96 +  144.9600 * t;
+	J =  34.35 + 3034.9057 * t;
+		  
+   	S =  50.08 + 1222.1138 * t;
+
+   	P = 238.96 +  144.9600 * t;
  		
 	/* calc periodic terms in table 37.A */
 	for (i=0; i < PLUTO_COEFFS; i++)

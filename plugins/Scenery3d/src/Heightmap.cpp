@@ -327,6 +327,7 @@ Heightmap::QuadTreeNode::QuadTreeNode(const Vec2f &min, const Vec2f &max)
 Heightmap::QuadTreeNode::QuadTreeNode()
 	: parent(Q_NULLPTR), children(Q_NULLPTR), level(-1), depth(-1), nodecount(-1)
 {
+
 }
 
 void Heightmap::QuadTreeNode::init(QuadTreeNode* parent, const Vec2f& min, const Vec2f& max)
@@ -349,6 +350,7 @@ void Heightmap::QuadTreeNode::init(QuadTreeNode* parent, const Vec2f& min, const
 	{
 		level = 0;
 	}
+
 }
 
 Heightmap::QuadTreeNode::~QuadTreeNode()

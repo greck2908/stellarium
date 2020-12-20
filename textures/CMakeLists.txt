@@ -1,6 +1,6 @@
 ########### install files ###############
 
-INSTALL(DIRECTORY ./ DESTINATION ${SDATALOC}/textures
+INSTALL(DIRECTORY ./ DESTINATION share/${PACKAGE}/textures
         FILES_MATCHING PATTERN "*.png"
         PATTERN "CMakeFiles" EXCLUDE )
 

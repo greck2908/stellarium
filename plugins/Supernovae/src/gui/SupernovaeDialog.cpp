@@ -25,7 +25,6 @@
 #include <QFileDialog>
 
 #include "StelApp.hpp"
-#include "StelCore.hpp"
 #include "ui_supernovaeDialog.h"
 #include "SupernovaeDialog.hpp"
 #include "Supernovae.hpp"
@@ -77,13 +76,9 @@ void SupernovaeDialog::createDialogContent()
 		this, SLOT(retranslate()));
 
 	// Kinetic scrolling
-	kineticScrollingList << ui->aboutTextBrowser;
-	StelGui* gui= dynamic_cast<StelGui*>(StelApp::getInstance().getGui());
-	if (gui)
-	{
-		enableKineticScrolling(gui->getFlagUseKineticScrolling());
-		connect(gui, SIGNAL(flagUseKineticScrollingChanged(bool)), this, SLOT(enableKineticScrolling(bool)));
-	}
+	QList<QWidget *> addscroll;
+	addscroll << ui->aboutTextBrowser;
+	installKineticScrolling(addscroll);
 
 	// Settings tab / updates group
 	connect(ui->internetUpdatesCheckbox, SIGNAL(stateChanged(int)), this, SLOT(setUpdatesEnabled(int)));
@@ -107,10 +102,12 @@ void SupernovaeDialog::createDialogContent()
 
 	// About tab
 	setAboutHtml();
+	StelGui* gui = dynamic_cast<StelGui*>(StelApp::getInstance().getGui());	
 	if(gui!=Q_NULLPTR)
 		ui->aboutTextBrowser->document()->setDefaultStyleSheet(QString(gui->getStelStyle().htmlStyleSheet));
 
 	updateGuiFromSettings();
+
 }
 
 void SupernovaeDialog::setAboutHtml(void)
@@ -233,20 +230,14 @@ void SupernovaeDialog::updateCompleteReceiver(void)
 	ui->lastUpdateDateTimeEdit->setDateTime(sn->getLastUpdate());
 	QTimer *timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(refreshUpdateValues()));
-	setAboutHtml();
 }
 
 void SupernovaeDialog::restoreDefaults(void)
 {
-	if (askConfirmation())
-	{
-		qDebug() << "[Supernovae] restore defaults...";
-		sn->restoreDefaults();
-		sn->readSettingsFromConfig();
-		updateGuiFromSettings();
-	}
-	else
-		qDebug() << "[Supernovae] restore defaults is canceled...";
+	qDebug() << "[Supernovae] restore defaults";
+	sn->restoreDefaults();
+	sn->readSettingsFromConfig();
+	updateGuiFromSettings();
 }
 
 void SupernovaeDialog::updateGuiFromSettings(void)

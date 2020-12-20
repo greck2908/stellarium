@@ -91,7 +91,6 @@ Pulsar::Pulsar(const QVariantMap& map)
 	eccentricity = map.value("eccentricity").toDouble();
 	RA = StelUtils::getDecAngle(map.value("RA").toString());
 	DE = StelUtils::getDecAngle(map.value("DE").toString());
-	StelUtils::spheToRect(RA, DE, XYZ);
 	w50 = map.value("w50").toFloat();
 	s400 = map.value("s400").toFloat();
 	s600 = map.value("s600").toFloat();
@@ -172,14 +171,13 @@ QString Pulsar::getInfoString(const StelCore* core, const InfoStringGroup& flags
 
 	if (flags&Name)
 	{
-		oss << "<h2>";
-		if (!getNameI18n().isEmpty())
-			oss << getNameI18n() << "< br />";
-		oss << getDesignation() << "</h2>";
+		QString name = pulsarName.isEmpty() ? QString("<h2>%1</h2>").arg(getDesignation()) : QString("<h2>%1 (%2)</h2>").arg(getNameI18n()).arg(getDesignation());
+		oss << name;
 	}
 
 	if (flags&ObjectType)
 	{
+
 		if (glitch==0)
 			oss << QString("%1: <b>%2</b>").arg(q_("Type"), q_("pulsar")) << "<br />";
 		else
@@ -286,6 +284,7 @@ QString Pulsar::getInfoString(const StelCore* core, const InfoStringGroup& flags
 
 		if (notes.length()>0)
 			oss << "<br />" << QString("%1: %2").arg(q_("Notes")).arg(getPulsarTypeInfoString(notes)) << "<br />";
+
 	}
 
 	postProcessInfoString(str, flags);
@@ -316,7 +315,7 @@ QVariantMap Pulsar::getInfoMap(const StelCore *core) const
 
 Vec3f Pulsar::getInfoColor(void) const
 {
-	return Vec3f(1.f, 1.f, 1.f);
+	return Vec3f(1.0, 1.0, 1.0);
 }
 
 float Pulsar::getVMagnitude(const StelCore* core) const
@@ -416,19 +415,28 @@ double Pulsar::getAngularSize(const StelCore*) const
 
 void Pulsar::update(double deltaTime)
 {
-	labelsFader.update(static_cast<int>(deltaTime*1000));
+	labelsFader.update((int)(deltaTime*1000));
 }
 
 void Pulsar::draw(StelCore* core, StelPainter *painter)
 {
+	StelSkyDrawer* sd = core->getSkyDrawer();
+	float mag = getVMagnitudeWithExtinction(core);
+	StelUtils::spheToRect(RA, DE, XYZ);
+
 	Vec3d win;
 	// Check visibility of pulsar
 	if (!(painter->getProjector()->projectCheck(XYZ, win)))
 		return;
 
-	float mag = getVMagnitudeWithExtinction(core);
-	StelSkyDrawer* sd = core->getSkyDrawer();
-	const float mlimit = sd->getLimitMagnitude();
+	painter->setBlending(true, GL_ONE, GL_ONE);
+
+	if (glitch>0 && glitchFlag)
+		painter->setColor(glitchColor[0], glitchColor[1], glitchColor[2], 1.f);
+	else
+		painter->setColor(markerColor[0], markerColor[1], markerColor[2], 1.f);
+
+	float mlimit = sd->getLimitMagnitude();
 	bool visible = true;
 	if (filteredMode && s400<filterValue)
 		visible = false;
@@ -439,11 +447,6 @@ void Pulsar::draw(StelCore* core, StelPainter *painter)
 		float size = getAngularSize(Q_NULLPTR)*M_PI/180.*painter->getProjector()->getPixelPerRadAtCenter();
 		float shift = 5.f + size/1.6f;		
 
-		if (glitch>0 && glitchFlag)
-			painter->setColor(glitchColor, 1.f);
-		else
-			painter->setColor(markerColor, 1.f);
-		painter->setBlending(true, GL_ONE, GL_ONE);
 		painter->drawSprite2dMode(XYZ, distributionMode ? 4.f : 5.f);
 
 		if (labelsFader.getInterstate()<=0.f && !distributionMode && (mag+2.f)<mlimit)

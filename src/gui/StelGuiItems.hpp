@@ -54,8 +54,8 @@ class CornerButtons : public QObject, public QGraphicsItem
 	Q_INTERFACES(QGraphicsItem)
 public:
 	CornerButtons(QGraphicsItem* parent=Q_NULLPTR);
-	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR) Q_DECL_OVERRIDE;
-	virtual QRectF boundingRect() const Q_DECL_OVERRIDE;
+	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR);
+	virtual QRectF boundingRect() const;
 	void setOpacity(double opacity);
 private:
 	mutable double lastOpacity;
@@ -139,7 +139,7 @@ signals:
 public slots:
 	//! set whether the button is checked
 	void setChecked(int b);
-	void setChecked(bool b) { setChecked(static_cast<int>(b)); }
+	void setChecked(bool b) { setChecked((int)b); }
 
 protected:
 	virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
@@ -184,9 +184,9 @@ class LeftStelBar : public QObject, public QGraphicsItem
 	Q_INTERFACES(QGraphicsItem)
 public:
 	LeftStelBar(QGraphicsItem* parent);
-	~LeftStelBar() Q_DECL_OVERRIDE;
-	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR) Q_DECL_OVERRIDE;
-	virtual QRectF boundingRect() const Q_DECL_OVERRIDE;
+	~LeftStelBar();
+	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR);
+	virtual QRectF boundingRect() const;
 	void addButton(StelButton* button);
 	QRectF boundingRectNoHelpLabel() const;
 	//! Set the color for all the sub elements
@@ -207,9 +207,9 @@ class BottomStelBar : public QObject, public QGraphicsItem
 	Q_INTERFACES(QGraphicsItem)
 public:
 	BottomStelBar(QGraphicsItem* parent, const QPixmap& pixLeft=QPixmap(), const QPixmap& pixRight=QPixmap(), const QPixmap& pixMiddle=QPixmap(), const QPixmap& pixSingle=QPixmap());
-	virtual ~BottomStelBar() Q_DECL_OVERRIDE;
-	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR) Q_DECL_OVERRIDE;
-	virtual QRectF boundingRect() const Q_DECL_OVERRIDE;
+	virtual ~BottomStelBar();
+	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR);
+	virtual QRectF boundingRect() const;
 	QRectF boundingRectNoHelpLabel() const;
 
 	//! Add a button in a group in the button bar. Group are displayed in alphabetic order.
@@ -233,25 +233,25 @@ public:
 
 	//! Set whether time must be displayed in the bottom bar
 	void setFlagShowTime(bool b) {flagShowTime=b;}
-	bool getFlagShowTime() const { return flagShowTime; }
+	bool getFlagShowTime() { return flagShowTime; }
 	//! Set whether location info must be displayed in the bottom bar
 	void setFlagShowLocation(bool b) {flagShowLocation=b;}
-	bool getFlagShowLocation() const { return flagShowLocation; }
+	bool getFlagShowLocation() { return flagShowLocation; }
 	//! Set whether FPS info must be displayed in the bottom bar
 	void setFlagShowFps(bool b) {flagShowFps=b;}
-	bool getFlagShowFps() const { return flagShowFps; }
+	bool getFlagShowFps() { return flagShowFps; }
 	//! Set whether FOV info must be displayed in the bottom bar
 	void setFlagShowFov(bool b) {flagShowFov=b;}
-	bool getFlagShowFov() const { return flagShowFov; }
+	bool getFlagShowFov() { return flagShowFov; }
 	//! Set whether DMS format for FOV info must be displayed in the bottom bar
 	void setFlagFovDms(bool b) {flagFovDms=b;}
-	bool getFlagFovDms() const { return flagFovDms; }
+	bool getFlagFovDms() { return flagFovDms; }
 	//! Set whether JD for time info must be displayed in the bottom bar
 	void setFlagTimeJd(bool b) {flagTimeJd=b;}
-	bool getFlagTimeJd() const { return flagTimeJd; }
+	bool getFlagTimeJd() { return flagTimeJd; }
 
 	void setFlagShowTz(bool b) { flagShowTZ=b; }
-	bool getFlagShowTz() const { return flagShowTZ; }
+	bool getFlagShowTz() { return flagShowTZ; }
 
 signals:
 	void sizeChanged();
@@ -259,11 +259,6 @@ signals:
 private slots:
 	//! Update the help label when a button is hovered
 	void buttonHoverChanged(bool b);
-
-	//! connect from StelApp to resize fonts on the fly.
-	void setFontSizeFromApp(int size);
-	//! connect from StelApp to set font on the fly.
-	void setFont(QFont font);
 
 private:
 	void updateText(bool forceUpdatePos=false);

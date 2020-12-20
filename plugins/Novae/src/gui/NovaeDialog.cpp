@@ -25,7 +25,6 @@
 #include <QFileDialog>
 
 #include "StelApp.hpp"
-#include "StelCore.hpp"
 #include "ui_novaeDialog.h"
 #include "NovaeDialog.hpp"
 #include "Novae.hpp"
@@ -76,14 +75,9 @@ void NovaeDialog::createDialogContent()
 		this, SLOT(retranslate()));
 
 	// Kinetic scrolling
-	kineticScrollingList << ui->aboutTextBrowser;
-	StelGui* gui= dynamic_cast<StelGui*>(StelApp::getInstance().getGui());
-	if (gui)
-	{
-		enableKineticScrolling(gui->getFlagUseKineticScrolling());
-		connect(gui, SIGNAL(flagUseKineticScrollingChanged(bool)), this, SLOT(enableKineticScrolling(bool)));
-	}
-
+	QList<QWidget *> addscroll;
+	addscroll << ui->aboutTextBrowser;
+	installKineticScrolling(addscroll);
 
 	// Settings tab / updates group
 	connect(ui->internetUpdatesCheckbox, SIGNAL(stateChanged(int)), this, SLOT(setUpdatesEnabled(int)));
@@ -229,20 +223,14 @@ void NovaeDialog::updateCompleteReceiver(void)
 	ui->lastUpdateDateTimeEdit->setDateTime(nova->getLastUpdate());
 	QTimer *timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(refreshUpdateValues()));
-	setAboutHtml();
 }
 
 void NovaeDialog::restoreDefaults(void)
 {
-	if (askConfirmation())
-	{
-		qDebug() << "[Novae] restore defaults...";
-		nova->restoreDefaults();
-		nova->readSettingsFromConfig();
-		updateGuiFromSettings();
-	}
-	else
-		qDebug() << "[Novae] restore defaults is canceled...";
+	qDebug() << "[Novae] restore defaults";
+	nova->restoreDefaults();
+	nova->readSettingsFromConfig();
+	updateGuiFromSettings();
 }
 
 void NovaeDialog::updateGuiFromSettings(void)

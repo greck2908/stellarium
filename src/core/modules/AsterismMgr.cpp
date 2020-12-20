@@ -21,6 +21,7 @@
 #include "AsterismMgr.hpp"
 #include "Asterism.hpp"
 #include "StarMgr.hpp"
+#include "StelUtils.hpp"
 #include "StelApp.hpp"
 #include "StelProjector.hpp"
 #include "StelObjectMgr.hpp"
@@ -82,9 +83,9 @@ void AsterismMgr::init()
 
 	// Load colors from config file
 	QString defaultColor = conf->value("color/default_color").toString();
-	setLinesColor(Vec3f(conf->value("color/asterism_lines_color", defaultColor).toString()));
-	setLabelsColor(Vec3f(conf->value("color/asterism_names_color", defaultColor).toString()));
-	setRayHelpersColor(Vec3f(conf->value("color/rayhelper_lines_color", defaultColor).toString()));
+	setLinesColor(StelUtils::strToVec3f(conf->value("color/asterism_lines_color", defaultColor).toString()));
+	setLabelsColor(StelUtils::strToVec3f(conf->value("color/asterism_names_color", defaultColor).toString()));
+	setRayHelpersColor(StelUtils::strToVec3f(conf->value("color/rayhelper_lines_color", defaultColor).toString()));
 
 	StelObjectMgr *objectManager = GETSTELMODULE(StelObjectMgr);
 	objectManager->registerStelObjectMgr(this);
@@ -111,11 +112,6 @@ double AsterismMgr::getCallOrder(StelModuleActionName actionName) const
 void AsterismMgr::updateSkyCulture(const QString& skyCultureDir)
 {
 	currentSkyCultureID = skyCultureDir;
-
-	StelObjectMgr* objMgr = GETSTELMODULE(StelObjectMgr);
-	const QList<StelObjectP> selectedObject = objMgr->getSelectedObject("Asterism");
-	if (!selectedObject.isEmpty()) // Unselect asterism
-		objMgr->unSelect();
 
 	// Check if the sky culture changed since last load, if not don't load anything
 	if (lastLoadedSkyCulture == skyCultureDir)
@@ -189,9 +185,9 @@ Vec3f AsterismMgr::getLabelsColor() const
 
 void AsterismMgr::setFontSize(const float newFontSize)
 {
-	if ((static_cast<float>(asterFont.pixelSize()) - newFontSize) != 0.0f)
+	if (asterFont.pixelSize() != newFontSize)
 	{
-		asterFont.setPixelSize(static_cast<int>(newFontSize));
+		asterFont.setPixelSize(newFontSize);
 		emit fontSizeChanged(newFontSize);
 	}
 }
@@ -407,7 +403,7 @@ void AsterismMgr::loadNames(const QString& namesFile)
 	// Now parse the file
 	// lines to ignore which start with a # or are empty
 	QRegExp commentRx("^(\\s*#.*|\\s*)$");
-	QRegExp recRx("^\\s*(\\w+)\\s+_[(]\"(.*)\"[)]\\s*([\\,\\d\\s]*)\\n");
+	QRegExp recRx("^\\s*(\\w+)\\s+_[(]\"(.*)\"[)]\\n");
 	QRegExp ctxRx("(.*)\",\\s*\"(.*)");
 
 	// Some more variables to use in the parsing
@@ -435,16 +431,16 @@ void AsterismMgr::loadNames(const QString& namesFile)
 		}
 		else
 		{
-			shortName = recRx.cap(1);
+			shortName = recRx.capturedTexts().at(1);
 			aster = findFromAbbreviation(shortName);
 			// If the asterism exists, set the English name
 			if (aster != Q_NULLPTR)
 			{
-				ctxt = recRx.cap(2);
+				ctxt = recRx.capturedTexts().at(2);
 				if (ctxRx.exactMatch(ctxt))
 				{
-					aster->englishName = ctxRx.cap(1);
-					aster->context = ctxRx.cap(2);
+					aster->englishName = ctxRx.capturedTexts().at(1);
+					aster->context = ctxRx.capturedTexts().at(2);
 				}
 				else
 				{
@@ -475,7 +471,7 @@ void AsterismMgr::updateI18n()
 // update faders
 void AsterismMgr::update(double deltaTime)
 {
-	const int delta = static_cast<int>(deltaTime*1000);
+	const int delta = (int)(deltaTime*1000);
 	for (auto* asterism : asterisms)
 	{
 		asterism->update(delta);

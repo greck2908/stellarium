@@ -21,7 +21,7 @@
 #define TESTSTELJSONPARSER_HPP
 
 #include <QObject>
-#include <QtTest>
+#include <QTest>
 
 class TestStelJsonParser : public QObject
 {
@@ -31,8 +31,6 @@ private slots:
 	void testBase();
 	void benchmarkParse();
 	void testErrors();
-	void testWriteParse();
-
 private:
 	QByteArray largeJsonBuff;
 	QByteArray listJsonBuff;

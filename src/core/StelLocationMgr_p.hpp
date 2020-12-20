@@ -64,7 +64,7 @@ class LibGPSLookupHelper : public GPSLookupHelper
 	Q_OBJECT
 public:
 	LibGPSLookupHelper(QObject * parent);
-	~LibGPSLookupHelper() Q_DECL_OVERRIDE;
+	~LibGPSLookupHelper();
 
 	virtual bool isReady() Q_DECL_OVERRIDE;
 public slots:
@@ -85,7 +85,7 @@ class NMEALookupHelper : public GPSLookupHelper
 	Q_OBJECT
 public:
 	NMEALookupHelper(QObject* parent);
-	~NMEALookupHelper() Q_DECL_OVERRIDE;
+	~NMEALookupHelper();
 	virtual bool isReady() Q_DECL_OVERRIDE
 	{
 		//if (nmea) qDebug() << "NMEALookupHelper::isReady(): Last Error was:" << nmea->error();

@@ -19,7 +19,7 @@
 #ifndef TESTINDICONNECTION_HPP
 #define TESTINDICONNECTION_HPP
 
-#include <QtTest>
+#include <QTest>
 
 class TestINDIConnection : public QObject
 {

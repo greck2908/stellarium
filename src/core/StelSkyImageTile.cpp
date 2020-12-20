@@ -106,6 +106,7 @@ void StelSkyImageTile::draw(StelCore* core, StelPainter& sPainter, float)
 // Return the list of tiles which should be drawn.
 void StelSkyImageTile::getTilesToDraw(QMultiMap<double, StelSkyImageTile*>& result, StelCore* core, const SphericalRegionP& viewPortPoly, float limitLuminance, bool recheckIntersect)
 {
+
 #ifndef NDEBUG
 	// When this method is called, we can assume that:
 	// - the parent tile min resolution was reached
@@ -115,7 +116,7 @@ void StelSkyImageTile::getTilesToDraw(QMultiMap<double, StelSkyImageTile*>& resu
 	if (parent!=Q_NULLPTR)
 	{
 		Q_ASSERT(isDeletionScheduled()==false);
-		const double degPerPixel = 1./core->getProjection(StelCore::FrameJ2000)->getPixelPerRadAtCenter()*M_180_PI;
+		const double degPerPixel = 1./core->getProjection(StelCore::FrameJ2000)->getPixelPerRadAtCenter()*180./M_PI;
 		Q_ASSERT(degPerPixel<parent->minResolution);
 
 		Q_ASSERT(parent->isDeletionScheduled()==false);
@@ -207,7 +208,7 @@ void StelSkyImageTile::getTilesToDraw(QMultiMap<double, StelSkyImageTile*>& resu
 	}
 
 	// Check if we reach the resolution limit
-	const float degPerPixel = 1.f/core->getProjection(StelCore::FrameJ2000)->getPixelPerRadAtCenter()*M_180_PIf;
+	const double degPerPixel = 1./core->getProjection(StelCore::FrameJ2000)->getPixelPerRadAtCenter()*180./M_PI;
 	if (degPerPixel < minResolution)
 	{
 		if (subTiles.isEmpty() && !subTilesUrls.isEmpty())
@@ -261,7 +262,7 @@ bool StelSkyImageTile::drawTile(StelCore* core, StelPainter& sPainter)
 			sPainter.setBlending(true); // Normal transparency mode
 		else
 			sPainter.setBlending(true, GL_ONE, GL_ONE); // additive blending
-		color.set(ad_lum,ad_lum,ad_lum, static_cast<float>(texFader->currentValue()));
+		color.set(ad_lum,ad_lum,ad_lum, texFader->currentValue());
 	}
 	else
 	{
@@ -326,8 +327,9 @@ bool StelSkyImageTile::drawTile(StelCore* core, StelPainter& sPainter)
 			extinctedColor[1]*=fabs(extinctionFactor);
 			extinctedColor[2]*=fabs(extinctionFactor);
 		}
-		sPainter.setColor(extinctedColor);
+		sPainter.setColor(extinctedColor[0], extinctedColor[1], extinctedColor[2], extinctedColor[3]);
 		sPainter.drawSphericalRegion(poly.data(), StelPainter::SphericalPolygonDrawModeTextureFill);
+		
 	}
 
 #ifdef DEBUG_STELSKYIMAGE_TILE
@@ -444,7 +446,7 @@ void StelSkyImageTile::loadFromQVariantMap(const QVariantMap& map)
 		{
 			const QVariantList vl = vRaDec.toList();
 			Vec3d v;
-			StelUtils::spheToRect(vl.at(0).toFloat(&ok)*M_PI_180f, vl.at(1).toFloat(&ok)*M_PI_180f, v);
+			StelUtils::spheToRect(vl.at(0).toFloat(&ok)*M_PI/180.f, vl.at(1).toFloat(&ok)*M_PI/180.f, v);
 			if (!ok)
 				throw std::runtime_error("wrong Ra and Dec, expect a double value");
 			vertices.append(v);

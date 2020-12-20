@@ -19,6 +19,7 @@
 
 #include <QObject>
 #include <QtDebug>
+#include <QtTest>
 
 #include "tests/testExtinction.hpp"
 
@@ -40,5 +41,5 @@ void TestExtinction::testBase()
 	mag=2.0f;
 	extCls.setExtinctionCoefficient(0.25);
 	extCls.forward(vert, &mag);
-	QVERIFY(fabs(mag-2.25)<0.0001);
+	QVERIFY(mag==2.25);
 }

@@ -71,7 +71,6 @@ void SlewDialog::createDialogContent()
 	connect(ui->radioButtonDecimal, SIGNAL(toggled(bool)), this, SLOT(setFormatDecimal(bool)));
 
 	connect(ui->pushButtonSlew, SIGNAL(clicked()), this, SLOT(slew()));
-	connect(ui->pushButtonSync, SIGNAL(clicked()), this, SLOT(sync()));
 	connect(ui->pushButtonConfigure, SIGNAL(clicked()), this, SLOT(showConfiguration()));
 
 	connect(telescopeManager, SIGNAL(clientConnected(int, QString)), this, SLOT(addTelescope(int, QString)));
@@ -220,24 +219,8 @@ void SlewDialog::slew()
 	if (!telescope)
 		return;
 
-	StelObjectP selectObject = Q_NULLPTR;
+	StelObjectP selectObject = nullptr;
 	telescope->telescopeGoto(targetPosition, selectObject);
-}
-
-void SlewDialog::sync()
-{
-	double radiansRA  = ui->spinBoxRA->valueRadians();
-	double radiansDec = ui->spinBoxDec->valueRadians();
-
-	Vec3d targetPosition;
-	StelUtils::spheToRect(radiansRA, radiansDec, targetPosition);
-
-	auto telescope = currentTelescope();
-	if (!telescope)
-		return;
-
-	StelObjectP selectObject = Q_NULLPTR;
-	telescope->telescopeSync(targetPosition, selectObject);
 }
 
 void SlewDialog::getCurrentObjectInfo()
@@ -257,7 +240,7 @@ void SlewDialog::getCenterInfo()
 	StelCore *core = StelApp::getInstance().getCore();
 	const StelProjectorP projector = core->getProjection(StelCore::FrameEquinoxEqu);
 	Vec3d centerPosition;
-	Vector2<qreal> center = projector->getViewportCenter();
+	Vec2f center = projector->getViewportCenter();
 	projector->unProject(center[0], center[1], centerPosition);
 	double dec_j2000 = 0;
 	double ra_j2000 = 0;
@@ -268,6 +251,7 @@ void SlewDialog::getCenterInfo()
 
 void SlewDialog::editStoredPoints()
 {
+
 	storedPointsDialog->setVisible(true);
 	QVariantList qvl;
 	for (int i = 1;i< ui->comboBoxStoredPoints->count(); i++)
@@ -342,7 +326,7 @@ void SlewDialog::onCurrentTelescopeChanged()
 {
 	// remove previous controlWidget
 	QLayoutItem* child;
-	while ((child = ui->controlWidgetLayout->takeAt(0)) != Q_NULLPTR)
+	while ((child = ui->controlWidgetLayout->takeAt(0)) != 0)
 	{
 		delete child->widget();
 		delete child;
@@ -362,7 +346,7 @@ void SlewDialog::onCurrentTelescopeChanged()
 void SlewDialog::savePointsToFile()
 {
 	//Open/create the JSON file
-	QString pointsJsonPath = StelFileMgr::findFile("modules/TelescopeControl", static_cast<StelFileMgr::Flags>(StelFileMgr::Directory|StelFileMgr::Writable)) + "/points.json";
+	QString pointsJsonPath = StelFileMgr::findFile("modules/TelescopeControl", (StelFileMgr::Flags)(StelFileMgr::Directory|StelFileMgr::Writable)) + "/points.json";
 	if (pointsJsonPath.isEmpty())
 	{
 		qWarning() << "SlewDialog: Error saving points";
@@ -401,7 +385,7 @@ void SlewDialog::savePointsToFile()
 void SlewDialog::loadPointsFromFile()
 {
 	QVariantMap result;
-	QString pointsJsonPath = StelFileMgr::findFile("modules/TelescopeControl", static_cast<StelFileMgr::Flags>(StelFileMgr::Directory|StelFileMgr::Writable)) + "/points.json";
+	QString pointsJsonPath = StelFileMgr::findFile("modules/TelescopeControl", (StelFileMgr::Flags)(StelFileMgr::Directory|StelFileMgr::Writable)) + "/points.json";
 
 	if (pointsJsonPath.isEmpty())
 	{

@@ -115,21 +115,22 @@ QString TuiNodeColor::getDisplayText() const
 
 void TuiNodeColor::incPart(int part, bool add)
 {
-	float diff = 0.01f;
+	float diff = 0.01;
 
 	if (add)
 	{
-		if (value[part]+diff > 1.0f)
-			value[part] = 1.0f;
+		if (value[part]+diff > 1.0)
+			value[part] = 1.0;
 		else
 			value[part]+=diff;
 	}
 	else
 	{
-		if (value[part]-diff < 0.f)
-			value[part] = 0.f;
+		if (value[part]-diff < 0.)
+			value[part] = 0.;
 		else
 			value[part]-=diff;
+
 	}
 }
 

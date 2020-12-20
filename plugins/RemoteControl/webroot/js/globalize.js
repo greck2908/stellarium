@@ -711,6 +711,7 @@ formatDate = function( value, format, culture ) {
 		numberString = split[ 0 ];
 		right = split.length > 1 ? split[ 1 ] : "";
 
+		var l;
 		if ( exponent > 0 ) {
 			right = zeroPad( right, exponent, false );
 			numberString += right.slice( 0, exponent );
@@ -1157,7 +1158,7 @@ getEraYear = function( date, cal, era, sortable ) {
 						break;
 					case "g": case "gg":
 						var eraName = matchGroup;
-						if ( !cal.eras ) return null;
+						if ( !eraName || !cal.eras ) return null;
 						eraName = trim( eraName.toLowerCase() );
 						for ( var i = 0, l = cal.eras.length; i < l; i++ ) {
 							if ( eraName === cal.eras[i].name.toLowerCase() ) {
@@ -1412,7 +1413,7 @@ Globalize.findClosestCulture = function( name ) {
 	else if ( typeof name === "object" ) {
 		return name;
 	}
-	return null;
+	return match || null;
 };
 
 Globalize.format = function( value, format, cultureSelector ) {

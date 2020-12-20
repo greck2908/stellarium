@@ -255,7 +255,7 @@ void MpcImportWindow::addObjects()
 
 	QList<QString> checkedObjectsNames;
 
-	// Collect names of marked objects
+	//Extract the marked objects
 	//TODO: Something smarter?
 	for (int row = 0; row < candidateObjectsModel->rowCount(); row++)
 	{
@@ -269,55 +269,39 @@ void MpcImportWindow::addObjects()
 	}
 	//qDebug() << "Checked:" << checkedObjectsNames;
 
-	// collect from candidatesForAddition all candidates that were selected by the user into `approvedForAddition` ...
 	QList<SsoElements> approvedForAddition;
 	for (int i = 0; i < candidatesForAddition.count(); i++)
 	{
-		auto candidate = candidatesForAddition.at(i);
-		QString name = candidate.value("name").toString();
+		QString name = candidatesForAddition.at(i).value("name").toString();
 		if (checkedObjectsNames.contains(name))
-			approvedForAddition.append(candidate);
+			approvedForAddition.append(candidatesForAddition.at(i));
 	}
 
-	//qDebug() << "Approved for addition:" << approvedForAddition;
-
-	// collect all new (!!!) candidates that were selected by the user into `approvedForUpdate`
-	// if the user opted to overwrite, those candidates are added to `approvedForAddition` instead
 	bool overwrite = ui->radioButtonOverwrite->isChecked();
 	QList<SsoElements> approvedForUpdate;
 	for (int j = 0; j < candidatesForUpdate.count(); j++)
 	{
-		auto candidate = candidatesForUpdate.at(j);
-		QString name = candidate.value("name").toString();
+		QString name = candidatesForUpdate.at(j).value("name").toString();
 		if (checkedObjectsNames.contains(name))
 		{
-			// XXX: odd... if "overwrite" is false, data is overwritten anyway.
 			if (overwrite)
 			{
-				approvedForAddition.append(candidate);
+				approvedForAddition.append(candidatesForUpdate.at(j));
 			}
 			else
 			{
-				approvedForUpdate.append(candidate);
+				approvedForUpdate.append(candidatesForUpdate.at(j));
 			}
 		}
 	}
 
-	//qDebug() << "Approved for updates:" << approvedForUpdate;
-
-	// append *** + update *** the approvedForAddition candidates to custom solar system config
+	//Write to file
 	ssoManager->appendToSolarSystemConfigurationFile(approvedForAddition);
 
-	// if instead "update existing objects" was selected, update existing candidates from `approvedForUpdate` in custom solar system config
-	// update name, MPC number, orbital elements
-	// if the user asked more to update, include type (asteroid, comet, plutino, cubewano, ...) and magnitude parameters
-	bool update = ui->radioButtonUpdate->isChecked();
-	// ASSERT(update != overwrite); // because of radiobutton behaviour. TODO this UI is not very clear anyway.
-	if (update) 
+	if (ui->radioButtonUpdate->isChecked())
 	{
 		SolarSystemEditor::UpdateFlags flags(SolarSystemEditor::UpdateNameAndNumber | SolarSystemEditor::UpdateOrbitalElements);
-		bool onlyorbital = ui->checkBoxOnlyOrbitalElements->isChecked();
-		if (!onlyorbital)
+		if (!ui->checkBoxOnlyOrbitalElements->isChecked())
 		{
 			flags |= SolarSystemEditor::UpdateType;
 			flags |= SolarSystemEditor::UpdateMagnitudeParameters;
@@ -345,11 +329,9 @@ void MpcImportWindow::pasteClipboardURL()
 
 void MpcImportWindow::selectFile()
 {
-	QString filter = q_("Plain Text File");
-	filter.append(" (*.txt);;");
-	filter.append(q_("All Files"));
-	filter.append(" (*.*)");
-	QString filePath = QFileDialog::getOpenFileName(Q_NULLPTR, q_("Select a file"), QDir::homePath(), filter);
+	QStringList directories = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation) +
+							  QStandardPaths::standardLocations(QStandardPaths::HomeLocation) << "/";
+	QString filePath = QFileDialog::getOpenFileName(Q_NULLPTR, q_("Select a text file"), directories[0]);
 	ui->lineEditFilePath->setText(filePath);
 }
 
@@ -366,14 +348,13 @@ void MpcImportWindow::bookmarkSelected(QString bookmarkTitle)
 
 void MpcImportWindow::populateCandidateObjects(QList<SsoElements> objects)
 {
-	candidatesForAddition.clear();	// new objects
-	candidatesForUpdate.clear();	// existing objects
+	candidatesForAddition.clear();
 
 	//Get a list of the current objects
 	//QHash<QString,QString> defaultSsoIdentifiers = ssoManager->getDefaultSsoIdentifiers();
 	QHash<QString,QString> loadedSsoIdentifiers = ssoManager->listAllLoadedSsoIdentifiers();
 
-	//Separate the objects into visual groups in the list
+	//Separating the objects into visual groups in the list
 	//int newDefaultSsoIndex = 0;
 	int newLoadedSsoIndex = 0;
 	int newNovelSsoIndex = 0;
@@ -423,8 +404,6 @@ void MpcImportWindow::populateCandidateObjects(QList<SsoElements> objects)
 //			newNovelSsoIndex++;
 //		}
 //		else
-
-		// identify existing (in italic) and new objects
 		if (loadedSsoIdentifiers.contains(name))
 		{
 			//Duplicate of another existing object
@@ -561,11 +540,11 @@ void MpcImportWindow::updateDownloadProgress(qint64 bytesReceived, qint64 bytesT
 		//Round to the greatest possible derived unit
 		while (bytesTotal > 1024)
 		{
-			bytesReceived >>= 10;
-			bytesTotal    >>= 10;
+			bytesReceived = std::floor(bytesReceived / 1024.);
+			bytesTotal    = std::floor(bytesTotal / 1024.);
 		}
-		currentValue = static_cast<int>(bytesReceived);
-		endValue = static_cast<int>(bytesTotal);
+		currentValue = bytesReceived;
+		endValue = bytesTotal;
 	}
 
 	downloadProgressBar->setValue(currentValue);
@@ -614,7 +593,9 @@ void MpcImportWindow::startDownload(QString urlString)
 	QNetworkRequest request;
 	request.setUrl(QUrl(url));
 	request.setRawHeader("User-Agent", StelUtils::getUserAgentString().toUtf8());
+	#if QT_VERSION >= 0x050600
 	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+	#endif
 	downloadReply = networkManager->get(request);
 	connect(downloadReply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(updateDownloadProgress(qint64,qint64)));
 }
@@ -783,9 +764,13 @@ void MpcImportWindow::sendQueryToUrl(QUrl url)
 	QNetworkRequest request;
 	request.setUrl(QUrl(url));
 	request.setRawHeader("User-Agent", StelUtils::getUserAgentString().toUtf8());
-	request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded"); //Is this really necessary?
-	request.setHeader(QNetworkRequest::ContentLengthHeader, url.query(QUrl::FullyEncoded).length());
+	request.setHeader(QNetworkRequest::ContentTypeHeader,
+	                  "application/x-www-form-urlencoded");//Is this really necessary?
+	request.setHeader(QNetworkRequest::ContentLengthHeader,
+	                  url.query(QUrl::FullyEncoded).length());
+	#if QT_VERSION >= 0x050600
 	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+	#endif
 
 	connect(networkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(receiveQueryReply(QNetworkReply*)));
 	queryReply = networkManager->post(request, url.query(QUrl::FullyEncoded).toUtf8());	
@@ -880,8 +865,8 @@ void MpcImportWindow::readQueryReply(QNetworkReply * reply)
 		file.write(reply->readAll());		
 		file.close();
 
-		QRegExp cometProvisionalDesignation("[PCDXI]/");
-		QRegExp cometDesignation("(\\d)+[PCDXI]/");
+		QRegExp cometProvisionalDesignation("[PCDX]/");
+		QRegExp cometDesignation("(\\d)+[PCDX]/");
 		QString queryData = ui->lineEditQuery->text().trimmed();
 
 		if (cometDesignation.indexIn(queryData) == 0 || cometProvisionalDesignation.indexIn(queryData) == 0)
@@ -1047,7 +1032,6 @@ void MpcImportWindow::loadBookmarks()
 	bookmarks[MpcMinorPlanets].insert("MPCORB: other unusual objects", "https://www.minorplanetcenter.net/iau/MPCORB/Unusual.txt");
 	bookmarks[MpcMinorPlanets].insert("MPCORB: orbits from the latest DOU MPEC", "https://www.minorplanetcenter.net/iau/MPCORB/DAILY.DAT");
 	bookmarks[MpcMinorPlanets].insert("MPCORB: elements of NEAs for current epochs (today)", "https://www.minorplanetcenter.net/iau/MPCORB/NEAm00.txt");
-	bookmarks[MpcMinorPlanets].insert("MPCORB: orbits from the latest DOU MPEC", "https://www.minorplanetcenter.net/iau/MPCORB/DAILY.DAT");
 	bookmarks[MpcMinorPlanets].insert("MPCAT: Unusual minor planets (including NEOs)", "https://www.minorplanetcenter.net/iau/ECS/MPCAT/unusual.txt");
 	bookmarks[MpcMinorPlanets].insert("MPCAT: Distant minor planets (Centaurs and transneptunians)", "https://www.minorplanetcenter.net/iau/ECS/MPCAT/distant.txt");
 	int start = 0;
@@ -1069,7 +1053,6 @@ void MpcImportWindow::loadBookmarks()
 	}
 	bookmarks[MpcComets].insert("MPC's list of observable comets", "https://www.minorplanetcenter.net/iau/Ephemerides/Comets/Soft00Cmt.txt");
 	bookmarks[MpcComets].insert("MPCORB: comets", "https://www.minorplanetcenter.net/iau/MPCORB/CometEls.txt");
-	bookmarks[MpcComets].insert("Gideon van Buitenen: comets","http://astro.vanbuitenen.nl/cometelements?format=mpc&mag=obs");
 
 	//Try to save them to a file
 	saveBookmarks();

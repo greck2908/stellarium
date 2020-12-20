@@ -54,17 +54,10 @@ StelPluginInfo RemoteSyncStelPluginInterface::getPluginInfo() const
 	info.authors = "Florian Schaukowitsch and Georg Zotti";
 	info.contact = "http://homepage.univie.ac.at/Georg.Zotti";
 	info.description = N_("Provides state synchronization for multiple Stellarium instances running in a network. See manual for detailed description.");
-	info.acknowledgements = N_("This plugin was created in the 2015/2016 campaigns of the ESA Summer of Code in Space programme.");
 	info.version = REMOTESYNC_PLUGIN_VERSION;
 	info.license = REMOTESYNC_PLUGIN_LICENSE;
 	return info;
 }
-
-
-// A list that holds properties that cannot be sync'ed for technical reasons.
-// Currently only HipsMgr.surveys cannot be synchronized.
-QStringList RemoteSync::propertyBlacklist;
-
 
 RemoteSync::RemoteSync()
 	: clientServerPort(20180)
@@ -82,9 +75,6 @@ RemoteSync::RemoteSync()
 
 	reconnectTimer.setSingleShot(true);
 	connect(&reconnectTimer, SIGNAL(timeout()), this, SLOT(connectToServer()));
-
-	// There are a few unsynchronizable properties. They must be listed here!
-	propertyBlacklist.push_back("HipsMgr.surveys");
 }
 
 RemoteSync::~RemoteSync()
@@ -164,7 +154,7 @@ void RemoteSync::init()
 	qCDebug(remoteSync)<<"Plugin initialized";
 
 	//parse command line args
-	QStringList args = StelApp::getCommandlineArguments();
+	QStringList args = StelApp::getCommandlineArguments();;
 	QString syncMode = argsGetOptionWithArg(args,"","--syncMode","").toString();
 	QString syncHost = argsGetOptionWithArg(args,"","--syncHost","").toString();
 	int syncPort = argsGetOptionWithArg(args,"","--syncPort",0).toInt();
@@ -185,13 +175,11 @@ void RemoteSync::init()
 		qCDebug(remoteSync)<<"Connecting to server from command line";
 		connectToServer();
 	}
-
-	connect(StelApp::getInstance().getCore(), SIGNAL(configurationDataSaved()), this, SLOT(saveSettings()));
 }
 
 void RemoteSync::update(double deltaTime)
 {
-	Q_UNUSED(deltaTime)
+	Q_UNUSED(deltaTime);
 	if(server)
 	{
 		//pass update on to server, client does not need this
@@ -222,7 +210,7 @@ void RemoteSync::setClientServerPort(const int port)
 {
 	if(port != this->clientServerPort)
 	{
-		this->clientServerPort = static_cast<quint16>(port);
+		this->clientServerPort = port;
 		emit clientServerPortChanged(port);
 	}
 }
@@ -231,7 +219,7 @@ void RemoteSync::setServerPort(const int port)
 {
 	if(port!= serverPort)
 	{
-		serverPort = static_cast<quint16>(port);
+		serverPort = port;
 		emit serverPortChanged(port);
 	}
 }
@@ -387,8 +375,8 @@ void RemoteSync::loadSettings()
 {
 	conf->beginGroup("RemoteSync");
 	setClientServerHost(conf->value("clientServerHost","127.0.0.1").toString());
-	setClientServerPort(static_cast<quint16>(conf->value("clientServerPort",20180).toUInt()));
-	setServerPort(static_cast<quint16>(conf->value("serverPort",20180).toUInt()));
+	setClientServerPort(conf->value("clientServerPort",20180).toInt());
+	setServerPort(conf->value("serverPort",20180).toInt());
 	setClientSyncOptions(SyncClient::SyncOptions(conf->value("clientSyncOptions", SyncClient::ALL).toInt()));
 	setStelPropFilter(unpackStringList(conf->value("stelPropFilter").toString()));
 	setConnectionLostBehavior(static_cast<ClientBehavior>(conf->value("connectionLostBehavior",1).toInt()));
@@ -461,9 +449,4 @@ QDebug operator<<(QDebug deb, RemoteSync::SyncState state)
 	}
 
 	return deb;
-}
-
-bool RemoteSync::isPropertyBlacklisted(const QString &name)
-{
-	return propertyBlacklist.contains(name);
 }

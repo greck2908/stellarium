@@ -84,7 +84,6 @@ private:
 	StelTextureSP markerTexture;
 	static Vec3f markerColor;
 	static float markerSize;
-	static float selectPriority;
 
 	void draw(StelCore* core, StelPainter *painter);
 

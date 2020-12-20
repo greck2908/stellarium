@@ -44,7 +44,7 @@ varying highp vec3 P; //original unprojected position (in AU)
     varying highp vec3 normalZ;
 #else
     varying mediump vec3 normalVS;
-    //normal objects use gouraud shading
+    //normal objects use gourard shading
     //good enough for our spheres
     uniform highp vec3 lightDirection;
     varying mediump float lambertIllum;
@@ -71,16 +71,8 @@ void main()
     //other objects use the spherical normals
     highp vec3 normal = normalize(unprojectedVertex.xyz);
     #ifdef IS_MOON
-        if (abs(normal.z)==1.0) // avoid invalid pole anomaly
-        {
-            normalX=vec3(0);
-            normalY=vec3(0);
-        }
-        else
-        {
-            normalX = normalize(cross(vec3(0,0,1), normal));
-            normalY = normalize(cross(normal, normalX));
-        }
+        normalX = normalize(cross(vec3(0,0,1), normal));
+        normalY = normalize(cross(normal, normalX));
         normalZ = normal;
     #else
         normalVS = normal;

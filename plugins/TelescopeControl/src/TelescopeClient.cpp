@@ -43,8 +43,7 @@
 #include <QTextStream>
 
 #ifdef Q_OS_WIN
-	#include "ASCOM/TelescopeClientASCOM.hpp"
-	#include <Windows.h> // GetSystemTimeAsFileTime()
+	#include <windows.h> // GetSystemTimeAsFileTime()
 #else
 	#include <sys/time.h>
 #endif
@@ -69,10 +68,10 @@ TelescopeClient *TelescopeClient::create(const QString &url)
 	if (urlSchema.exactMatch(url))
 	{
 		// trimmed removes whitespace on either end of a QString
-		name = urlSchema.cap(1).trimmed();
-		type = urlSchema.cap(2).trimmed();
-		equinox = urlSchema.cap(3).trimmed();
-		params = urlSchema.cap(4).trimmed();
+		name = urlSchema.capturedTexts().at(1).trimmed();
+		type = urlSchema.capturedTexts().at(2).trimmed();
+		equinox = urlSchema.capturedTexts().at(3).trimmed();
+		params = urlSchema.capturedTexts().at(4).trimmed();
 	}
 	else
 	{
@@ -113,12 +112,6 @@ TelescopeClient *TelescopeClient::create(const QString &url)
 	{
 		newTelescope = new TelescopeClientINDI(name, params);
 	}
-	#ifdef Q_OS_WIN
-	else if (type == "ASCOM")
-	{
-		newTelescope = new TelescopeClientASCOM(name, params, eq);
-	}
-	#endif
 	else
 	{
 		qWarning() << "WARNING - unknown telescope type" << type << "- not creating a telescope object for url" << url;
@@ -128,14 +121,16 @@ TelescopeClient *TelescopeClient::create(const QString &url)
 	{
 		qDebug() << "TelescopeClient::create(): Unable to create a telescope client.";
 		delete newTelescope;
-		newTelescope = Q_NULLPTR;
+		newTelescope = 0;
 	}
 	return newTelescope;
 }
 
 
-TelescopeClient::TelescopeClient(const QString &name) : nameI18n(name), name(name)
-{}
+TelescopeClient::TelescopeClient(const QString &name) : name(name)
+{
+	nameI18n = name;
+}
 
 QString TelescopeClient::getInfoString(const StelCore* core, const InfoStringGroup& flags) const
 {
@@ -155,8 +150,6 @@ QString TelescopeClient::getInfoString(const StelCore* core, const InfoStringGro
 
 void TelescopeClient::move(double angle, double speed)
 {
-	Q_UNUSED(angle)
-	Q_UNUSED(speed)
 	qDebug() << "TelescopeClient::move not implemented";
 }
 
@@ -173,10 +166,10 @@ qint64 getNow(void)
 #ifdef Q_OS_WIN
 	FILETIME file_time;
 	GetSystemTimeAsFileTime(&file_time);
-	t = (*(reinterpret_cast<qint64*>(&file_time))/10) - 86400000000LL*134774;
+	t = (*((__int64*)(&file_time))/10) - 86400000000LL*134774;
 #else
 	struct timeval tv;
-	gettimeofday(&tv, Q_NULLPTR);
+	gettimeofday(&tv,0);
 	t = tv.tv_sec * 1000000LL + tv.tv_usec;
 #endif
 	// GZ JDfix for 0.14 I am 99.9% sure we no longer need the anti-correction
@@ -208,9 +201,9 @@ TelescopeTCP::TelescopeTCP(const QString &name, const QString &params, Equinox e
 	{
 		// I will not use the ok param to toInt as the
 		// QRegExp only matches valid integers.
-		host		= paramRx.cap(1).trimmed();
-		port		= static_cast<quint16>(paramRx.cap(2).toUInt());
-		time_delay	= paramRx.cap(3).toInt();
+		host		= paramRx.capturedTexts().at(1).trimmed();
+		port		= paramRx.capturedTexts().at(2).toInt();
+		time_delay	= paramRx.capturedTexts().at(3).toInt();
 	}
 	else
 	{
@@ -219,6 +212,12 @@ TelescopeTCP::TelescopeTCP(const QString &name, const QString &params, Equinox e
 	}
 
 	qDebug() << "TelescopeTCP paramaters host, port, time_delay:" << host << port << time_delay;
+
+	if (port <= 0 || port > 0xFFFF)
+	{
+		qWarning() << "ERROR creating TelescopeTCP - port not valid (should be less than 32767)";
+		return;
+	}
 	
 	if (time_delay <= 0 || time_delay > 10000000)
 	{
@@ -277,7 +276,7 @@ void TelescopeTCP::hangup(void)
 //! "Stellarium telescope control protocol" text file
 void TelescopeTCP::telescopeGoto(const Vec3d &j2000Pos, StelObjectP selectObject)
 {
-	Q_UNUSED(selectObject)
+	Q_UNUSED(selectObject);
 
 	if (!isConnected())
 		return;
@@ -289,14 +288,14 @@ void TelescopeTCP::telescopeGoto(const Vec3d &j2000Pos, StelObjectP selectObject
 		position = core->j2000ToEquinoxEqu(j2000Pos, StelCore::RefractionOff);
 	}
 
-	if (writeBufferEnd - writeBuffer + 20 < static_cast<int>(sizeof(writeBuffer)))
+	if (writeBufferEnd - writeBuffer + 20 < (int)sizeof(writeBuffer))
 	{
 		const double ra_signed = atan2(position[1], position[0]);
 		//Workaround for the discrepancy in precision between Windows/Linux/PPC Macs and Intel Macs:
 		const double ra = (ra_signed >= 0) ? ra_signed : (ra_signed + 2.0 * M_PI);
 		const double dec = atan2(position[2], std::sqrt(position[0]*position[0]+position[1]*position[1]));
-		unsigned int ra_int = static_cast<unsigned int>(floor(0.5 + ra*((static_cast<unsigned int>(0x80000000))/M_PI)));
-		int dec_int = static_cast<int>(floor(0.5 + dec*((static_cast<unsigned int>(0x80000000))/M_PI)));
+		unsigned int ra_int = (unsigned int)floor(0.5 + ra*(((unsigned int)0x80000000)/M_PI));
+		int dec_int = (int)floor(0.5 + dec*(((unsigned int)0x80000000)/M_PI));
 		// length of packet:
 		*writeBufferEnd++ = 20;
 		*writeBufferEnd++ = 0;
@@ -305,37 +304,37 @@ void TelescopeTCP::telescopeGoto(const Vec3d &j2000Pos, StelObjectP selectObject
 		*writeBufferEnd++ = 0;
 		// client_micros:
 		qint64 now = getNow();
-		*writeBufferEnd++ = static_cast<char>(now & 0xFF);
+		*writeBufferEnd++ = now;
 		now>>=8;
-		*writeBufferEnd++ = static_cast<char>(now & 0xFF);
+		*writeBufferEnd++ = now;
 		now>>=8;
-		*writeBufferEnd++ = static_cast<char>(now & 0xFF);
+		*writeBufferEnd++ = now;
 		now>>=8;
-		*writeBufferEnd++ = static_cast<char>(now & 0xFF);
+		*writeBufferEnd++ = now;
 		now>>=8;
-		*writeBufferEnd++ = static_cast<char>(now & 0xFF);
+		*writeBufferEnd++ = now;
 		now>>=8;
-		*writeBufferEnd++ = static_cast<char>(now & 0xFF);
+		*writeBufferEnd++ = now;
 		now>>=8;
-		*writeBufferEnd++ = static_cast<char>(now & 0xFF);
+		*writeBufferEnd++ = now;
 		now>>=8;
-		*writeBufferEnd++ = static_cast<char>(now & 0xFF);
+		*writeBufferEnd++ = now;
 		// ra:
-		*writeBufferEnd++ = static_cast<char>(ra_int & 0xFF);
+		*writeBufferEnd++ = ra_int;
 		ra_int>>=8;
-		*writeBufferEnd++ = static_cast<char>(ra_int & 0xFF);
+		*writeBufferEnd++ = ra_int;
 		ra_int>>=8;
-		*writeBufferEnd++ = static_cast<char>(ra_int & 0xFF);
+		*writeBufferEnd++ = ra_int;
 		ra_int>>=8;
-		*writeBufferEnd++ = static_cast<char>(ra_int & 0xFF);
+		*writeBufferEnd++ = ra_int;
 		// dec:
-		*writeBufferEnd++ = static_cast<char>(dec_int & 0xFF);
+		*writeBufferEnd++ = dec_int;
 		dec_int>>=8;
-		*writeBufferEnd++ = static_cast<char>(dec_int & 0xFF);
+		*writeBufferEnd++ = dec_int;
 		dec_int>>=8;
-		*writeBufferEnd++ = static_cast<char>(dec_int & 0xFF);
+		*writeBufferEnd++ = dec_int;
 		dec_int>>=8;
-		*writeBufferEnd++ = static_cast<char>(dec_int & 0xFF);
+		*writeBufferEnd++ = dec_int;
 	}
 	else
 	{
@@ -343,17 +342,10 @@ void TelescopeTCP::telescopeGoto(const Vec3d &j2000Pos, StelObjectP selectObject
 	}
 }
 
-void TelescopeTCP::telescopeSync(const Vec3d &j2000Pos, StelObjectP selectObject)
-{
-	Q_UNUSED(j2000Pos)
-	Q_UNUSED(selectObject)
-	return;
-}
-
 void TelescopeTCP::performWriting(void)
 {
-	const qint64 to_write = writeBufferEnd - writeBuffer;
-	const qint64 rc = tcpSocket->write(writeBuffer, to_write);
+	const int to_write = writeBufferEnd - writeBuffer;
+	const int rc = tcpSocket->write(writeBuffer, to_write);
 	if (rc < 0)
 	{
 		//TODO: Better error message. See the Qt documentation.
@@ -371,7 +363,7 @@ void TelescopeTCP::performWriting(void)
 		else
 		{
 			// partly written
-			memmove(writeBuffer, writeBuffer + rc, static_cast<size_t>(to_write - rc));
+			memmove(writeBuffer, writeBuffer + rc, to_write - rc);
 			writeBufferEnd -= rc;
 		}
 	}
@@ -380,8 +372,8 @@ void TelescopeTCP::performWriting(void)
 //! try to read some data from the telescope server
 void TelescopeTCP::performReading(void)
 {
-	const qint64 to_read = readBuffer + sizeof(readBuffer) - readBufferEnd;
-	const qint64 rc = tcpSocket->read(readBufferEnd, to_read);
+	const int to_read = readBuffer + sizeof(readBuffer) - readBufferEnd;
+	const int rc = tcpSocket->read(readBufferEnd, to_read);
 	if (rc < 0)
 	{
 		//TODO: Better error warning. See the Qt documentation.
@@ -400,8 +392,8 @@ void TelescopeTCP::performReading(void)
 		// parse the data in the read buffer:
 		while (readBufferEnd - p >= 2)
 		{
-			const int size = static_cast<int>((static_cast<unsigned char>(p[0])) | ((static_cast<unsigned int>(static_cast<unsigned char>(p[1]))) << 8));
-			if (size > static_cast<int>(sizeof(readBuffer)) || size < 4)
+			const int size = (int)(((unsigned char)(p[0])) | (((unsigned int)(unsigned char)(p[1])) << 8));
+			if (size > (int)sizeof(readBuffer) || size < 4)
 			{
 				qDebug() << "TelescopeTCP(" << name << ")::performReading: " << "bad packet size: " << size;
 				hangup();
@@ -412,7 +404,7 @@ void TelescopeTCP::performReading(void)
 				// wait for complete packet
 				break;
 			}
-			const int type = static_cast<int>((static_cast<unsigned char>(p[2])) | ((static_cast<unsigned int>(static_cast<unsigned char>(p[3]))) << 8));
+			const int type = (int)(((unsigned char)(p[2])) | (((unsigned int)(unsigned char)(p[3])) << 8));
 			// dispatch:
 			switch (type)
 			{
@@ -427,33 +419,33 @@ void TelescopeTCP::performReading(void)
 						hangup();
 						return;
 					}
-					const qint64 server_micros = static_cast<qint64>
-						((static_cast<quint64>(static_cast<unsigned char>(p[ 4]))) |
-						((static_cast<quint64>(static_cast<unsigned char>(p[ 5])) <<  8)) |
-						((static_cast<quint64>(static_cast<unsigned char>(p[ 6])) << 16)) |
-						((static_cast<quint64>(static_cast<unsigned char>(p[ 7])) << 24)) |
-						((static_cast<quint64>(static_cast<unsigned char>(p[ 8])) << 32)) |
-						((static_cast<quint64>(static_cast<unsigned char>(p[ 9])) << 40)) |
-						((static_cast<quint64>(static_cast<unsigned char>(p[10])) << 48)) |
-						((static_cast<quint64>(static_cast<unsigned char>(p[11])) << 56)));
+					const qint64 server_micros = (qint64)
+						(((quint64)(unsigned char)(p[ 4])) |
+						(((quint64)(unsigned char)(p[ 5])) <<  8) |
+						(((quint64)(unsigned char)(p[ 6])) << 16) |
+						(((quint64)(unsigned char)(p[ 7])) << 24) |
+						(((quint64)(unsigned char)(p[ 8])) << 32) |
+						(((quint64)(unsigned char)(p[ 9])) << 40) |
+						(((quint64)(unsigned char)(p[10])) << 48) |
+						(((quint64)(unsigned char)(p[11])) << 56));
 					const unsigned int ra_int =
-						( static_cast<unsigned int>(static_cast<unsigned char>(p[12]))) |
-						((static_cast<unsigned int>(static_cast<unsigned char>(p[13]))) <<  8) |
-						((static_cast<unsigned int>(static_cast<unsigned char>(p[14]))) << 16) |
-						((static_cast<unsigned int>(static_cast<unsigned char>(p[15]))) << 24);
-					const int dec_int = static_cast<int>
-						((static_cast<unsigned int>(static_cast<unsigned char>(p[16]))) |
-						((static_cast<unsigned int>(static_cast<unsigned char>(p[17]))) <<  8) |
-						((static_cast<unsigned int>(static_cast<unsigned char>(p[18]))) << 16) |
-						((static_cast<unsigned int>(static_cast<unsigned char>(p[19]))) << 24));
-					const int status = static_cast<int>
-						((static_cast<unsigned int>(static_cast<unsigned char>(p[20]))) |
-						((static_cast<unsigned int>(static_cast<unsigned char>(p[21])) <<  8)) |
-						((static_cast<unsigned int>(static_cast<unsigned char>(p[22])) << 16)) |
-						((static_cast<unsigned int>(static_cast<unsigned char>(p[23])) << 24)));
+						((unsigned int)(unsigned char)(p[12])) |
+						(((unsigned int)(unsigned char)(p[13])) <<  8) |
+						(((unsigned int)(unsigned char)(p[14])) << 16) |
+						(((unsigned int)(unsigned char)(p[15])) << 24);
+					const int dec_int =
+						(int)(((unsigned int)(unsigned char)(p[16])) |
+						     (((unsigned int)(unsigned char)(p[17])) <<  8) |
+						     (((unsigned int)(unsigned char)(p[18])) << 16) |
+						     (((unsigned int)(unsigned char)(p[19])) << 24));
+					const int status =
+						(int)(((unsigned int)(unsigned char)(p[20])) |
+						     (((unsigned int)(unsigned char)(p[21])) <<  8) |
+						     (((unsigned int)(unsigned char)(p[22])) << 16) |
+						     (((unsigned int)(unsigned char)(p[23])) << 24));
 
-					const double ra  =  ra_int * (M_PI/0x80000000u);
-					const double dec = dec_int * (M_PI/0x80000000u);
+					const double ra  =  ra_int * (M_PI/(unsigned int)0x80000000);
+					const double dec = dec_int * (M_PI/(unsigned int)0x80000000);
 					const double cdec = cos(dec);
 					Vec3d position(cos(ra)*cdec, sin(ra)*cdec, sin(dec));
 					Vec3d j2000Position = position;
@@ -479,7 +471,7 @@ void TelescopeTCP::performReading(void)
 		else
 		{
 			// partly handled
-			memmove(readBuffer, p, static_cast<size_t>(readBufferEnd - p));
+			memmove(readBuffer, p, readBufferEnd - p);
 			readBufferEnd -= (p - readBuffer);
 		}
 	}

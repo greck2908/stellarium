@@ -573,6 +573,7 @@ static void dscom(double epoch,  double ep,     double argpp,   double tc,     d
 	xgh4 = -18.0 * s4 * zel;
 	xh2  =  -2.0 * s2 * z22;
 	xh3  =  -2.0 * s2 * (z23 - z21);
+
 }  // end dscom
 
 /*-----------------------------------------------------------------------------
@@ -1218,6 +1219,7 @@ static void initl(int satn,      gravconsttype whichconst,
 	}
 	else
 		gsto = gstime(epoch + 2433281.5);
+
 }  // end initl
 
 /*-----------------------------------------------------------------------------

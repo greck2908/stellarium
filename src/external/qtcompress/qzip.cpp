@@ -930,6 +930,7 @@ QList<QZipReader::FileInfo> QZipReader::fileInfoList() const
         files.append(fi);
     }
     return files;
+
 }
 
 /*!

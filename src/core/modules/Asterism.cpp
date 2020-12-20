@@ -34,9 +34,9 @@
 #include <QDebug>
 #include <QFontMetrics>
 
-Vec3f Asterism::lineColor = Vec3f(0.4f,0.4f,0.8f);
-Vec3f Asterism::rayHelperColor = Vec3f(1.0f,1.0f,0.0f);
-Vec3f Asterism::labelColor = Vec3f(0.4f,0.4f,0.8f);
+Vec3f Asterism::lineColor = Vec3f(0.4,0.4,0.8);
+Vec3f Asterism::rayHelperColor = Vec3f(1.0,1.0,0.0);
+Vec3f Asterism::labelColor = Vec3f(0.4,0.4,0.8);
 const QString Asterism::ASTERISM_TYPE = QStringLiteral("Asterism");
 
 Asterism::Asterism()
@@ -62,10 +62,14 @@ bool Asterism::read(const QString& record, StarMgr *starMgr)
 
 	QString buf(record);
 	QTextStream istr(&buf, QIODevice::ReadOnly);
-	// We allow mixed-case abbreviations now that they can be displayed on screen. We then need toUpper() in comparisons.
-	istr >> abbreviation >> typeOfAsterism >> numberOfSegments;
+	QString abb;
+	istr >> abb >> typeOfAsterism >> numberOfSegments;
 	if (istr.status()!=QTextStream::Ok)
 		return false;
+
+	// It's better to allow mixed-case abbreviations now that they can be displayed on screen. We then need toUpper() in comparisons.
+	//abbreviation = abb.toUpper();
+	abbreviation=abb;
 
 	StelCore *core = StelApp::getInstance().getCore();
 	asterism = new StelObjectP[numberOfSegments*2];
@@ -80,14 +84,19 @@ bool Asterism::read(const QString& record, StarMgr *starMgr)
 				istr >> HP;
 				if(HP == 0)
 				{
+					// TODO: why is this delete commented?
+					// delete[] asterism;
 					return false;
 				}
-				asterism[i]=starMgr->searchHP(static_cast<int>(HP));
+
+				asterism[i]=starMgr->searchHP(HP);
+
 				if (!asterism[i])
 				{
 					qWarning() << "Error in Asterism " << abbreviation << ": can't find star HIP" << HP;
 					return false;
 				}
+
 				break;
 			}
 			case 2: // A small asterism with lines by J2000.0 coordinates
@@ -98,33 +107,39 @@ bool Asterism::read(const QString& record, StarMgr *starMgr)
 				istr >> RA >> DE;				
 				StelUtils::spheToRect(RA*M_PI/12., DE*M_PI/180., coords);
 				QList<StelObjectP> stars = starMgr->searchAround(coords, 0.1, core);
-				StelObjectP s = Q_NULLPTR;
-				double d = 10.;
+				StelObjectP s = NULL;
+				float d = 10.f;
 				for (const auto& p : stars)
 				{
-					double a = coords.angle(p->getJ2000EquatorialPos(core));
+					float a = coords.angle(p->getJ2000EquatorialPos(core));
 					if (a<d)
 					{
 						d = a;
 						s = p;
 					}
 				}
+
 				asterism[i] = s;
+
 				if (!asterism[i])
 				{
 					qWarning() << "Error in Asterism " << abbreviation << ": can't find star with coordinates" << RA << "/" << DE;
 					return false;
 				}
+
 				break;
 			}
 		}
+
 	}
 
 	if (typeOfAsterism>0)
 	{
 		XYZname.set(0.,0.,0.);
-		for(unsigned int j=0;j<numberOfSegments*2;++j)
-			XYZname+= asterism[j]->getJ2000EquatorialPos(core);
+		for(unsigned int ii=0;ii<numberOfSegments*2;++ii)
+		{
+			XYZname+= asterism[ii]->getJ2000EquatorialPos(StelApp::getInstance().getCore());
+		}
 		XYZname.normalize();
 	}
 	else
@@ -140,14 +155,14 @@ void Asterism::drawOptim(StelPainter& sPainter, const StelCore* core, const Sphe
 		if (lineFader.getInterstate()<=0.0001f)
 			return;
 
-		sPainter.setColor(lineColor, lineFader.getInterstate());
+		sPainter.setColor(lineColor[0], lineColor[1], lineColor[2], lineFader.getInterstate());
 	}
 	else
 	{
 		if (rayHelperFader.getInterstate()<=0.0001f)
 			return;
 
-		sPainter.setColor(rayHelperColor, rayHelperFader.getInterstate());
+		sPainter.setColor(rayHelperColor[0], rayHelperColor[1], rayHelperColor[2], rayHelperFader.getInterstate());
 	}
 
 	Vec3d star1;
@@ -164,15 +179,16 @@ void Asterism::drawOptim(StelPainter& sPainter, const StelCore* core, const Sphe
 
 void Asterism::drawName(StelPainter& sPainter) const
 {
-	if ((nameFader.getInterstate()==0.0f) || !flagAsterism)
+	if (!nameFader.getInterstate() || !flagAsterism)
 		return;
 
 	if (typeOfAsterism==2 && sPainter.getProjector()->getFov()>60.f)
 		return;
 
 	QString name = getNameI18n();
-	sPainter.setColor(labelColor, nameFader.getInterstate());
-	sPainter.drawText(static_cast<float>(XYname[0]), static_cast<float>(XYname[1]), name, 0., -sPainter.getFontMetrics().boundingRect(name).width()/2, 0, false);
+	sPainter.setColor(labelColor[0], labelColor[1], labelColor[2], nameFader.getInterstate());
+	sPainter.drawText(XYname[0], XYname[1], name, 0., -sPainter.getFontMetrics().width(name)/2, 0, false);
+
 }
 
 const Asterism* Asterism::isStarIn(const StelObject* s) const

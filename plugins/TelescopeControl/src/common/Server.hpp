@@ -68,7 +68,6 @@ protected:
 private:
 	  // called by Connection:
 	virtual void gotoReceived(unsigned int ra_int, int dec_int) = 0;
-	virtual void syncReceived(unsigned int ra_int, int dec_int) = 0;
 	friend class Connection;
 	
 	class SocketList : public list<Socket*>

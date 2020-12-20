@@ -99,29 +99,29 @@ public:
 			, gravityLabels(false)
 			, defaultAngleForGravityText(0.f)
 			, maskType(MaskNone)
-			, zNear(0.)
-			, zFar(0.)
-			, viewportCenter(128, 128)
-			, viewportCenterOffset(0, 0)
-			, viewportFovDiameter(0)
+			, zNear(0.f)
+			, zFar(0.f)
+			, viewportCenter(128.f, 128.f)
+			, viewportCenterOffset(0.f, 0.f)
+			, viewportFovDiameter(0.f)
 			, flipHorz(false)
 			, flipVert(false)
-			, devicePixelsPerPixel(1)
-			, widthStretch(1) {;}
+			, devicePixelsPerPixel(1.f)
+			, widthStretch(1.f) {;}
 
 		Vector4<int> viewportXywh;       //! posX, posY, width, height
 		float fov;                       //! FOV in degrees
 		bool gravityLabels;              //! the flag to use gravity labels or not
 		float defaultAngleForGravityText;//! a rotation angle to apply to gravity text (only if gravityLabels is set to false)
 		StelProjectorMaskType maskType;  //! The current projector mask
-		double zNear, zFar;              //! Near and far clipping planes
-		Vector2<qreal> viewportCenter;   //! Viewport center in screen pixel
-		Vector2<qreal> viewportCenterOffset;//! Viewport center's offset in fractions of screen width/height. Usable e.g. in cylindrical projection to move horizon down.
+		float zNear, zFar;               //! Near and far clipping planes
+		Vec2f viewportCenter;            //! Viewport center in screen pixel
+		Vec2f viewportCenterOffset;      //! Viewport center's offset in fractions of screen width/height. Usable e.g. in cylindrical projection to move horizon down.
 						 //! Currently only Y shift is fully implemented, X shift likely not too meaningful.
-		qreal viewportFovDiameter;       //! diameter of the FOV disk in pixel
+		float viewportFovDiameter;       //! diameter of the FOV disk in pixel
 		bool flipHorz, flipVert;         //! Whether to flip in horizontal or vertical directions
-		qreal devicePixelsPerPixel;      //! The number of device pixel per "Device Independent Pixels" (value is usually 1, but 2 for mac retina screens)
-		qreal widthStretch;              //! A factor to adapt to special installation setups, e.g. multi-projector with edge blending. Allow to stretch/squeeze projected content. Larger than 1 means the image is stretched wider.
+		float devicePixelsPerPixel;      //! The number of device pixel per "Device Independent Pixels" (value is usually 1, but 2 for mac retina screens)
+		float widthStretch;              //! A factor to adapt to special installation setups, e.g. multi-projector with edge blending. Allow to stretch/squeeze projected content. Larger than 1 means the image is stretched wider.
 	};
 
 	//! Destructor
@@ -169,8 +169,8 @@ public:
 	const Vec4i& getViewport() const;
 
 	//! Get the center of the viewport relative to the lower left corner of the screen.
-	Vector2<qreal> getViewportCenter() const;
-	Vector2<qreal> getViewportCenterOffset() const;
+	Vec2f getViewportCenter() const;
+	Vec2f getViewportCenterOffset() const;
 
 	//! Get the horizontal viewport offset in pixels.
 	int getViewportPosX() const;
@@ -182,7 +182,7 @@ public:
 	int getViewportHeight() const;
 
 	//! Get the number of device pixels per "Device Independent Pixels" (value is usually 1, but 2 for mac retina screens).
-	qreal getDevicePixelsPerPixel() const {return devicePixelsPerPixel;}
+	float getDevicePixelsPerPixel() const {return devicePixelsPerPixel;}
 	
 	//! Return a convex polygon on the sphere which includes the viewport in the current frame.
 	//! @param marginX an extra margin in pixel which extends the polygon size in the X direction.
@@ -293,13 +293,13 @@ protected:
 		  flipVert(0.f),
 		  pixelPerRad(0.f),
 		  maskType(MaskNone),
-		  zNear(0),
-		  oneOverZNearMinusZFar(0),
-		  viewportFovDiameter(0),
+		  zNear(0.f),
+		  oneOverZNearMinusZFar(0.f),
+		  viewportFovDiameter(0.f),
 		  gravityLabels(true),
 		  defaultAngleForGravityText(0.f),
-		  devicePixelsPerPixel(1.),
-		  widthStretch(1.0) {;}
+		  devicePixelsPerPixel(1.f),
+		  widthStretch(1.0f) {;}
 
 	//! Return whether the projection presents discontinuities. Used for optimization.
 	virtual bool hasDiscontinuity() const =0;
@@ -316,20 +316,20 @@ protected:
 
 	ModelViewTranformP modelViewTransform;	// Operator to apply (if not Q_NULLPTR) before the modelview projection step
 
-	float flipHorz,flipVert;            // Whether to flip in horizontal or vertical directions. Values only -1 (flip) or +1 (no flip).
+	float flipHorz,flipVert;            // Whether to flip in horizontal or vertical directions
 	float pixelPerRad;                  // pixel per rad at the center of the viewport disk
 	StelProjectorMaskType maskType;     // The current projector mask
-	double zNear, oneOverZNearMinusZFar;// Near and far clipping planes
+	float zNear, oneOverZNearMinusZFar; // Near and far clipping planes
 	Vec4i viewportXywh;                 // Viewport parameters
-	Vector2<qreal> viewportCenter;               // Viewport center in screen pixel
-	Vector2<qreal> viewportCenterOffset;         // Viewport center's offset in fractions of screen width/height. Usable e.g. in cylindrical projection to move horizon down.
+	Vec2f viewportCenter;               // Viewport center in screen pixel
+	Vec2f viewportCenterOffset;         // Viewport center's offset in fractions of screen width/height. Usable e.g. in cylindrical projection to move horizon down.
 					    // Currently only Y shift is fully implemented, X shift likely not too meaningful.
-	qreal viewportFovDiameter;          // diameter of the FOV disk in pixel
+	float viewportFovDiameter;          // diameter of the FOV disk in pixel
 	bool gravityLabels;                 // should label text align with the horizon?
 	float defaultAngleForGravityText;   // a rotation angle to apply to gravity text (only if gravityLabels is set to false)
 	SphericalCap boundingCap;           // Bounding cap of the whole viewport
-	qreal devicePixelsPerPixel;         // The number of device pixel per "Device Independent Pixels" (value is usually 1, but 2 for mac retina screens)
-	qreal widthStretch;                 // A factor to adapt to special installation setups, e.g. multi-projector with edge blending. Allow to stretch/squeeze projected content. Larger than 1 means the image is stretched wider.
+	float devicePixelsPerPixel;         // The number of device pixel per "Device Independent Pixels" (value is usually 1, but 2 for mac retina screens)
+	float widthStretch;                 // A factor to adapt to special installation setups, e.g. multi-projector with edge blending. Allow to stretch/squeeze projected content. Larger than 1 means the image is stretched wider.
 private:
 	//! Initialise the StelProjector from a param instance.
 	void init(const StelProjectorParams& param);

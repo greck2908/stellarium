@@ -20,6 +20,7 @@
 class DECLSPEC HttpCookie
 {
 public:
+
     /** Creates an empty cookie */
     HttpCookie();
 
@@ -96,6 +97,7 @@ public:
     int getVersion() const;
 
 private:
+
     QByteArray name;
     QByteArray value;
     QByteArray comment;
@@ -104,6 +106,7 @@ private:
     QByteArray path;
     bool secure;
     int version;
+
 };
 
 #endif // HTTPCOOKIE_H

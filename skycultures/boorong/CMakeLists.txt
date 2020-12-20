@@ -2,10 +2,10 @@
 ########### install files ###############
 
 # install info.ini
-INSTALL(FILES info.ini DESTINATION ${SDATALOC}/skycultures/boorong )
+INSTALL(FILES info.ini DESTINATION share/${PACKAGE}/skycultures/boorong )
 
 # install constellations data, proper names data, artwork and descriptions
-INSTALL(DIRECTORY ./ DESTINATION ${SDATALOC}/skycultures/boorong
+INSTALL(DIRECTORY ./ DESTINATION share/${PACKAGE}/skycultures/boorong
 	FILES_MATCHING PATTERN "constellation*" 
 	PATTERN "*_names.fab" 
 	PATTERN "*.png" 

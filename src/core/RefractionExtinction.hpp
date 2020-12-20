@@ -60,13 +60,13 @@ public:
 	//! Note that forward/backward are no absolute reverse operations!
 	void forward(const Vec3d& altAzPos, float* mag) const
 	{
-		//Q_ASSERT(std::fabs(altAzPos.length()-1.)<0.001);
-		*mag += airmass(static_cast<float>(altAzPos[2]), false) * ext_coeff;
+		Q_ASSERT(std::fabs(altAzPos.length()-1.f)<0.001f);
+		*mag += airmass(altAzPos[2], false) * ext_coeff;
 	}
 	
 	void forward(const Vec3f& altAzPos, float* mag) const
 	{
-		//Q_ASSERT(std::fabs(altAzPos.length()-1.f)<0.001f);
+		Q_ASSERT(std::fabs(altAzPos.length()-1.f)<0.001f);
 		*mag += airmass(altAzPos[2], false) * ext_coeff;
 	}
 
@@ -76,7 +76,7 @@ public:
 	//! Note that forward/backward are no absolute reverse operations!
 	void backward(const Vec3d& altAzPos, float* mag) const
 	{
-		*mag -= airmass(static_cast<float>(altAzPos[2]), false) * ext_coeff;
+		*mag -= airmass(altAzPos[2], false) * ext_coeff;
 	}
 	
 	void backward(const Vec3f& altAzPos, float* mag) const
@@ -92,6 +92,7 @@ public:
 	void setUndergroundExtinctionMode(UndergroundExtinctionMode mode) {undergroundExtinctionMode=mode;}
 	UndergroundExtinctionMode getUndergroundExtinctionMode() const {return undergroundExtinctionMode;}
 	
+private:
 	//! airmass computation for @param cosZ = cosine of zenith angle z (=sin(altitude)!).
 	//! The default (@param apparent_z = true) is computing airmass from observed altitude, following Rozenberg (1966) [X(90)~40].
 	//! if (@param apparent_z = false), we have geometrical altitude and compute airmass from that,
@@ -101,7 +102,6 @@ public:
 	//! Rozenberg is infinite at Z=92.17 deg, Young at Z=93.6 deg, so this function RETURNS SUBHORIZONTAL_AIRMASS BELOW -2 DEGREES!
 	float airmass(float cosZ, const bool apparent_z=true) const;
 
-private:
 	//! k, magnitudes/airmass, in [0.00, ... 1.00], (default 0.20).
 	float ext_coeff;
 

@@ -39,33 +39,48 @@ class MinorPlanet : public Planet
 {
 public:
 	MinorPlanet(const QString& englishName,
-		    double equatorialRadius,
+		    double radius,
 		    double oblateness,
 		    Vec3f halocolor,
 		    float albedo,
 		    float roughness,
 		    const QString& texMapName,
-		    const QString& normalMapName,
 		    const QString& objModelName,
 		    posFuncType _coordFunc,
-		    KeplerOrbit *orbitPtr,
+		    void* orbitPtr,
 		    OsculatingFunctType *osculatingFunc,
 		    bool closeOrbit,
 		    bool hidden,
 		    const QString &pTypeStr);
 
-	~MinorPlanet() Q_DECL_OVERRIDE;
+	~MinorPlanet();
 
+	//Inherited from StelObject via Planet
+	//! Get a string with data about the MinorPlanet.
+	//! Asteroids support the following InfoStringGroup flags:
+	//! - Name
+	//! - Magnitude
+	//! - RaDec
+	//! - AltAzi
+	//! - Distance
+	//! - Size
+	//! - PlainText
+	//! \param core the StelCore object
+	//! \param flags a set of InfoStringGroup items to include in the return value.
+	//! \return a QString containing an HMTL encoded description of the MinorPlanet.
+	virtual QString getInfoString(const StelCore *core, const InfoStringGroup &flags) const;
 	//The Comet class inherits the "Planet" type because the SolarSystem class
 	//was not designed to handle different types of objects.
 	// \todo Decide if this is going to be "MinorPlanet" or "Asteroid"
 	//virtual QString getType() const {return "MinorPlanet";}
-	virtual float getVMagnitude(const StelCore* core) const Q_DECL_OVERRIDE;
+	virtual float getVMagnitude(const StelCore* core) const;
 	//! sets the nameI18 property with the appropriate translation.
-	//! Function overridden to handle the problem with name conflicts.
-	virtual void translateName(const StelTranslator& trans) Q_DECL_OVERRIDE;
-	virtual QString getEnglishName(void) const Q_DECL_OVERRIDE;
-	virtual QString getNameI18n(void) const Q_DECL_OVERRIDE;
+	//! Function overriden to handle the problem with name conflicts.
+	virtual void translateName(const StelTranslator& trans);
+	virtual QString getEnglishName(void) const;
+	virtual QString getNameI18n(void) const;
+	QString getCommonEnglishName(void) const {return englishName;}
+	QString getCommonNameI18n(void) const {return nameI18;}
 
 	//! set the minor planet's number, if any.
 	//! The number should be specified as an additional parameter, as
@@ -81,18 +96,20 @@ public:
 	//! \todo Include them in the search lists.
 	void setProvisionalDesignation(QString designation);
 
+
 	//! sets absolute magnitude (H) and slope parameter (G).
 	//! These are the parameters in the IAU's two-parameter magnitude system
 	//! for minor planets. They are used to calculate the apparent magnitude at
 	//! different phase angles.
-	//! @param magnitude Absolute magnitude H
-	//! @param slope Slope parameter G. This is usually [0..1], sometimes slightly outside. Allowed here [-1..2].
 	void setAbsoluteMagnitudeAndSlope(const float magnitude, const float slope);
 
 	//! renders the subscript in a minor planet provisional designation with HTML.
 	//! \returns an emtpy string if the source string is not a provisional
 	//! designation.
 	static QString renderProvisionalDesignationinHtml(QString plainText);
+
+	//! set value for semi-major axis in AU
+	void setSemiMajorAxis(double value);
 
 	//! set values for spectral types
 	void setSpectralType(QString sT="", QString sB="");
@@ -101,18 +118,12 @@ public:
 	void setColorIndexBV(float bv=99.f);
 
 	//! get sidereal period for minor planet
-	virtual double getSiderealPeriod() const Q_DECL_OVERRIDE;
-
-protected:
-	// components for Planet::getInfoString() that are overridden here:
-	virtual QString getInfoStringName(const StelCore *core, const InfoStringGroup& flags) const Q_DECL_OVERRIDE;
-	virtual QString getInfoStringExtraMag(const StelCore *core, const InfoStringGroup& flags) const Q_DECL_OVERRIDE;
-	//! Any flag=Extra information to be displayed at the end
-	virtual QString getInfoStringExtra(const StelCore *core, const InfoStringGroup& flags) const Q_DECL_OVERRIDE;
+	double getSiderealPeriod() const;
 
 private:
 	int minorPlanetNumber;
-	float  slopeParameter; // This is G from the H, G system for computation of apparent magnitude.
+	float  slopeParameter;
+	double semiMajorAxis;
 
 	bool nameIsProvisionalDesignation;
 	QString provisionalDesignationHtml;

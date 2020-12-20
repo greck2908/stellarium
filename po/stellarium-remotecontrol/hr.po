@@ -3,664 +3,602 @@
 # This file is distributed under the same license as the stellarium-remotecontrol package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
-# Translators:
-# Orr Nuts <orrnuts@gmail.com>, 2020
-# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: stellarium-remotecontrol\n"
 "Report-Msgid-Bugs-To: stellarium@googlegroups.com\n"
-"POT-Creation-Date: 2020-11-04 23:08+0700\n"
-"PO-Revision-Date: 2017-11-29 01:19+0000\n"
-"Last-Translator: Orr Nuts <orrnuts@gmail.com>, 2020\n"
+"POT-Creation-Date: 2018-08-09 00:14+0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Language-Team: Croatian (https://www.transifex.com/stellarium/teams/80998/hr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: hr\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
 #: plugins/RemoteControl/webroot/js/api/actions.js:60
 msgid "Could not retrieve action list"
-msgstr "Nije moguće dohvatiti popis radnji"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/api/actions.js:88
 msgid "Action '%1' not accepted by server: "
-msgstr "Radnja '%1' nije prihvaćena od strane poslužitelja: "
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/api/actions.js:95
 msgid "Error sending action '%1' to server: "
-msgstr "Greška pri slanju radnje '%1' poslužitelju: "
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/api/location.js:33
 #: plugins/RemoteControl/webroot/js/api/location.js:61
 #: plugins/RemoteControl/webroot/js/api/search.js:188
 msgid "Error performing search"
-msgstr "Greška prilikom pretraživanja"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/api/location.js:125
 msgid "Could not retrieve country list"
-msgstr "Nije moguće dohvatiti popis zemalja"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/api/location.js:138
 msgid "Could not retrieve planet list"
-msgstr "Nije moguće dohvatiti popis planeta"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/api/properties.js:28
 msgid "Could not retrieve property list"
-msgstr "Nije moguće dohvatiti popis svojstva"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/api/properties.js:89
 #: plugins/RemoteControl/webroot/js/api/properties.js:110
 msgid "Property '%1' not accepted by server: "
-msgstr "Svojstvo '%1' nije prihvaćeno od strane poslužitelja: "
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/api/properties.js:96
 msgid "Error sending property '%1' to server: "
-msgstr "Greška pri slanju svojstva '%1' poslužitelju: "
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/api/remotecontrol.js:197
 msgid "Error sending command to server: "
-msgstr "Greška pri slanju naredbe poslužitelju:"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/api/scripts.js:27
 msgid "Could not retrieve script list"
-msgstr "Nije moguće dohvatiti popis skripta"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/api/search.js:35
 msgid "querying"
-msgstr "šaljem upit"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/api/search.js:44
 msgid "Error (%1)"
-msgstr "Greška (%1)"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/api/search.js:60
 msgid "Error performing Simbad lookup"
-msgstr "Greška pri pretraživanju Simbad baze podataka"
+msgstr ""
 
-#: plugins/RemoteControl/webroot/js/api/search.js:79 index.html:219
+#: plugins/RemoteControl/webroot/js/api/search.js:79 index.html:147
 #: tablet7in.html:235
 msgid "idle"
-msgstr "u mirovanju"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/api/search.js:105
 msgid "Error loading object types"
-msgstr "Greška pri učitavanju vrsta objekta"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/api/search.js:138
 msgid "Error getting object list"
-msgstr "Greška pri dohvaćanju popisa objekta"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/api/search.js:200
 msgid "waiting"
-msgstr "čekam"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/api/viewoptions.js:38
 msgid "Could not retrieve projection list"
-msgstr "Nije moguće dohvatiti popis projekcija"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/api/viewoptions.js:51
 #: plugins/RemoteControl/webroot/js/api/viewoptions.js:64
 msgid "Could not retrieve landscape list"
-msgstr "Nije moguće dohvatiti popis krajolika"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/plugins/scenery3d.js:22
-#: plugins/RemoteControl/webroot/js/ui/scripts.js:76 index.html:628
-#: index.html:685 tablet7in.html:733 tablet7in.html:793
+#: plugins/RemoteControl/webroot/js/ui/scripts.js:76 index.html:524
+#: index.html:581 tablet7in.html:701 tablet7in.html:761
 msgid "-none-"
-msgstr "-nijedan-"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/plugins/scenery3d.js:28
 msgid "(Currently loading: %1)"
-msgstr "(Trenutno učitavam: %1)"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/plugins/scenery3d.js:71
 msgid "Could not retrieve Scenery3d list"
-msgstr "Nije moguće dohvatiti Scenery3d popis"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/ui/actions.js:44
 #: plugins/RemoteControl/webroot/js/ui/actions.js:77
 msgid "on"
-msgstr "uključeno"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/ui/actions.js:44
 #: plugins/RemoteControl/webroot/js/ui/actions.js:77
 msgid "off"
-msgstr "isključeno"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/ui/combobox.js:58
 msgid "Show All Items"
-msgstr "Prikaži sve stavke"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/ui/combobox.js:124
 msgid "Input did not match any item"
-msgstr "Unos ne odgovara nijednoj stavci"
+msgstr ""
 
 #: plugins/RemoteControl/webroot/js/ui/search.js:285
 msgid "No current selection"
-msgstr "Nema trenutnog odabira"
+msgstr ""
 
 #: index.html:5 tablet7in.html:5
 msgid "Stellarium remote control plugin"
-msgstr "Stellarium dodatak za daljinsko upravljanje"
+msgstr ""
 
 #: index.html:17 tablet7in.html:18
 msgid "Please wait, loading"
-msgstr "Molimo pričekajte, učitavam"
+msgstr ""
 
 #: index.html:26 tablet7in.html:27
 msgid "Stellarium remote control"
-msgstr "Stellarium daljinsko upravljanje"
+msgstr ""
 
 #: index.html:30 tablet7in.html:31
 msgid "Main controls"
-msgstr "Glavne kontrole"
+msgstr ""
 
 #: index.html:33 tablet7in.html:38
 msgid "DSO"
-msgstr "ODS"
+msgstr ""
 
 #: index.html:36
 msgid "Actions and scripts"
-msgstr "Radnje i skripte"
+msgstr ""
 
 #: index.html:39 tablet7in.html:45
 msgid "Scenery3d"
-msgstr "Scenery3d"
+msgstr ""
 
 #: index.html:77
 msgid "Pause"
-msgstr "Pauza"
+msgstr ""
 
 #: index.html:82 tablet7in.html:183
 msgid "Time jumps"
-msgstr "Vremenski skokovi"
+msgstr ""
 
 #: index.html:86 tablet7in.html:187
 msgid "Solar hour"
-msgstr "Solarni sat"
+msgstr ""
 
 #: index.html:87 tablet7in.html:188
 msgid "Solar day"
-msgstr "Solarni dan"
+msgstr ""
 
 #: index.html:88 tablet7in.html:189
 msgid "Solar week"
-msgstr "Solarni tjedan"
+msgstr ""
 
 #: index.html:91 tablet7in.html:192
 msgid "Sidereal year"
-msgstr "Siderička godina"
+msgstr ""
 
 #: index.html:92 tablet7in.html:193
 msgid "Sidereal century"
-msgstr "Sideričko stoljeće"
+msgstr ""
 
 #: index.html:94 tablet7in.html:195
 msgid "Synodic month"
-msgstr "Sinodički mjesec"
+msgstr ""
 
 #: index.html:95 tablet7in.html:196
 msgid "Draconic month"
-msgstr "Drakonistički mjesec"
+msgstr ""
 
 #: index.html:96 tablet7in.html:197
 msgid "Draconic year"
-msgstr "Drakonistička godina"
+msgstr ""
 
 #: index.html:98 tablet7in.html:210
 msgid "Gaussian year"
-msgstr "Gaussova godina"
+msgstr ""
 
 #: index.html:101 tablet7in.html:200
 msgid "Anomalistic month"
-msgstr "Anomalistički mjesec"
+msgstr ""
 
 #: index.html:102 tablet7in.html:201
 msgid "Anomalistic year"
-msgstr "Anomalistička godina"
+msgstr ""
 
 #: index.html:103 tablet7in.html:202
 msgid "Anomalistic century"
-msgstr "Anomalističko stoljeće"
+msgstr ""
 
 #: index.html:105 tablet7in.html:204
 msgid "Mean tropical month"
-msgstr "Srednji tropski mjesec"
+msgstr ""
 
 #: index.html:106 tablet7in.html:205
 msgid "Mean tropical year"
-msgstr "Srednja tropska godina"
+msgstr ""
 
 #: index.html:107 tablet7in.html:206
 msgid "Mean tropical century"
-msgstr "Srednje tropsko stoljeće"
+msgstr ""
 
 #: index.html:109 tablet7in.html:208
 msgid "Tropical year"
-msgstr "Tropska godina"
+msgstr ""
 
 #: index.html:110 tablet7in.html:209
 msgid "Julian year"
-msgstr "Julijanska godina"
+msgstr ""
 
 #: index.html:111 tablet7in.html:211
 msgid "Julian century"
-msgstr "Julijansko stoljeće"
+msgstr ""
 
-#: index.html:123 tablet7in.html:101
-msgid "View towards horizon at Azimuth"
-msgstr "Pogled prema horizontu na azimutu"
-
-#: index.html:144 tablet7in.html:123
-msgid "Vertical View offset"
-msgstr "Pomak vertikalnog pogleda"
-
-#: index.html:154 tablet7in.html:133
-msgid "Reset"
-msgstr "Reset"
-
-#: index.html:160 tablet7in.html:138
+#: index.html:123 tablet7in.html:138
 msgid "FOV"
-msgstr "Vidno polje"
+msgstr ""
 
-#: index.html:213 tablet7in.html:229
+#: index.html:141 tablet7in.html:229
 msgid "Enter search term. Use TAB to navigate results."
 msgstr ""
-"Unesi pojam za pretraživanje. Koristi TAB tipku za kretanje po rezultatima."
 
-#: index.html:214 tablet7in.html:230
+#: index.html:142 tablet7in.html:230
 msgid "Select and focus"
-msgstr "Odaberi i fokusiraj"
+msgstr ""
 
-#: index.html:240 tablet7in.html:259
+#: index.html:168 tablet7in.html:259
 msgid "Selection mode"
-msgstr "Način odabira"
+msgstr ""
 
-#: index.html:240 tablet7in.html:259
+#: index.html:168 tablet7in.html:259
 msgid "Center on object"
-msgstr "Centriraj na objekt"
+msgstr ""
 
-#: index.html:240 tablet7in.html:259
+#: index.html:168 tablet7in.html:259
 msgid "Center and zoom to object"
-msgstr "Centriraj i uvećaj objekt"
+msgstr ""
 
-#: index.html:240 tablet7in.html:259
+#: index.html:168 tablet7in.html:259
 msgid "Just mark the object"
-msgstr "Samo označi objekt"
+msgstr ""
 
-#: index.html:242 tablet7in.html:261
+#: index.html:170 tablet7in.html:261
 msgid "Quick select"
-msgstr "Brzi odabir"
+msgstr ""
 
-#: index.html:246 tablet7in.html:265
+#: index.html:174 tablet7in.html:265
 msgid "Earth"
-msgstr "Zemlja"
+msgstr ""
 
-#: index.html:246 tablet7in.html:265
+#: index.html:174 tablet7in.html:265
 msgid "Pluto"
-msgstr "Pluton"
+msgstr ""
 
-#: index.html:252 tablet7in.html:294
+#: index.html:180 tablet7in.html:294
 msgid "Current selection"
-msgstr "Trenutni odabir"
+msgstr ""
 
-#: index.html:268 tablet7in.html:321
+#: index.html:196 tablet7in.html:321
 msgid "Milky Way brightness:"
-msgstr "Sjaj Mliječne staze:"
+msgstr ""
 
-#: index.html:272 tablet7in.html:333
+#: index.html:200 tablet7in.html:333
 msgid "Digitized Sky Survey"
-msgstr "Digitized Sky Survey"
+msgstr ""
 
-#: index.html:273 tablet7in.html:334
-msgid "HiPS Survey"
-msgstr "HiPS Survey"
-
-#: index.html:287 tablet7in.html:351
-msgid "Show planet orbits"
-msgstr "Prikaži orbite planeta"
-
-#: index.html:288 tablet7in.html:352
-msgid "Show planet orbits only"
-msgstr "Prikaži samo orbite planeta"
-
-#: index.html:289 tablet7in.html:353
-msgid "Show orbit for selected planet"
-msgstr "Prikaži orbitu odabranog planeta"
-
-#: index.html:290 tablet7in.html:354
-msgid "Show planet trails"
-msgstr "Prikaži staze planeta"
-
-#: index.html:291 tablet7in.html:355
-msgid "Show trail only for selected planet"
-msgstr "Prikaži stazu samo za odabrani planet"
-
-#: index.html:322 tablet7in.html:409
+#: index.html:243 tablet7in.html:399
 msgid "Shooting Stars"
-msgstr "Zvijezde padalice"
+msgstr ""
 
-#: index.html:323 tablet7in.html:410
+#: index.html:244 tablet7in.html:400
 msgid "ZHR:"
-msgstr "ZHR:"
+msgstr ""
 
-#: index.html:368 tablet7in.html:463
+#: index.html:288 tablet7in.html:452
 msgid ""
 "Instantaneous circles of earth´s axis on its motion around ecliptical poles."
 " Displayed on Earth only."
 msgstr ""
-"Trenutne kružnice zemljine osi u njenom kretanju oko polova ekliptike. "
-"Prikazuje se samo na Zemlji."
 
-#: index.html:377 tablet7in.html:472
+#: index.html:297 tablet7in.html:461
 msgid "Solstices"
-msgstr "Solsticiji"
-
-#: index.html:378 tablet7in.html:473
-msgid "Crossquarters"
-msgstr "Srednje točke između solsticija i ekvinocija"
-
-#: index.html:379 tablet7in.html:474
-msgid "Major Standstill"
-msgstr "Najviši zastoj"
-
-#: index.html:380 tablet7in.html:475
-msgid "Minor Standstill"
-msgstr "Najniži zastoj"
-
-#: index.html:389 tablet7in.html:484
-msgid "Current Planet:"
-msgstr "Trenutni planet:"
-
-#: index.html:429 tablet7in.html:524
-msgid "Catalogue of Reflection Nebulae (Van den Bergh, 1966)"
-msgstr "Katalog refleksijskih maglica (Van den Bergh, 1966)"
-
-#: index.html:447 tablet7in.html:542
-msgid ""
-"Catalogue of southern stars embedded in nebulosity (van den Bergh+, 1975)"
 msgstr ""
-"Katalog južnih zvijezda ukomponiranih u maglovitost  (Van den Bergh+, 1975.)"
 
-#: index.html:502
-msgid "Objects without identifier"
-msgstr "Objekti bez identifikatora"
+#: index.html:298 tablet7in.html:462
+msgid "Crossquarters"
+msgstr ""
 
-#: index.html:527 tablet7in.html:616
+#: index.html:299 tablet7in.html:463
+msgid "Major Standstill"
+msgstr ""
+
+#: index.html:300 tablet7in.html:464
+msgid "Minor Standstill"
+msgstr ""
+
+#: index.html:310 tablet7in.html:474
+msgid "Current Planet:"
+msgstr ""
+
+#: index.html:438 tablet7in.html:596
 msgid "Bright Nebulae"
-msgstr "Sjajne maglice"
+msgstr ""
 
-#: index.html:528 tablet7in.html:617
+#: index.html:439 tablet7in.html:597
 msgid "Dark Nebulae"
-msgstr "Tamne maglice"
+msgstr ""
 
-#: index.html:529 tablet7in.html:618
+#: index.html:440 tablet7in.html:598
 msgid "Planetary Nebulae"
-msgstr "Planetarne maglice"
+msgstr ""
 
-#: index.html:538 tablet7in.html:627
+#: index.html:449 tablet7in.html:607
 msgid "Labels and markers"
-msgstr "Nazivi i oznake"
+msgstr ""
 
-#: index.html:563 tablet7in.html:652
-msgid "Use associated planet and position"
-msgstr "Koristi pridruženi planet i položaj"
-
-#: index.html:572 tablet7in.html:661
+#: index.html:478 tablet7in.html:636
 msgid "Show illumination"
-msgstr "Prikaži osvjetljenje"
+msgstr ""
 
-#: index.html:577 tablet7in.html:667
+#: index.html:483 tablet7in.html:642
 msgid "Current landscape"
-msgstr "Trenutni krajolik"
+msgstr ""
 
-#: index.html:589 tablet7in.html:680
+#: index.html:495 tablet7in.html:655
 msgid "Show lines with thickness"
-msgstr "Prikaži linije s debljinom"
+msgstr ""
 
-#: index.html:594 tablet7in.html:685
+#: index.html:500 tablet7in.html:660
 msgid "Show asterisms with thickness"
-msgstr "Prikaži asterizme s debljinom"
+msgstr ""
 
-#: index.html:598 tablet7in.html:689
-msgid "Show ray helpers with thickness"
-msgstr "Prikaži pomoćne zrake s debljinom"
-
-#: index.html:606 tablet7in.html:699
-msgid "Show boundaries with thickness"
-msgstr "Prikaži granice s debljinom"
-
-#: index.html:611 tablet7in.html:704
-msgid "Constellation selection isolated"
-msgstr "Odabir zviježđa izoliran"
-
-#: index.html:615 tablet7in.html:708
+#: index.html:511 tablet7in.html:676
 msgid "Current sky culture"
-msgstr "Trenutna kultura zvijezđa"
+msgstr ""
 
-#: index.html:628 tablet7in.html:733
+#: index.html:524 tablet7in.html:701
 msgid "Active script:"
-msgstr "Aktivna skripta:"
+msgstr ""
 
-#: index.html:629 tablet7in.html:734
+#: index.html:525 tablet7in.html:702
 msgid "Run selected script"
-msgstr "Pokreni odabranu skriptu"
+msgstr ""
 
-#: index.html:629 tablet7in.html:734
+#: index.html:525 tablet7in.html:702
 msgid "Stop current script"
-msgstr "Zaustavi trenutnu skriptu"
+msgstr ""
 
-#: index.html:634 tablet7in.html:41 tablet7in.html:718
+#: index.html:530 tablet7in.html:41 tablet7in.html:686
 msgid "Actions"
-msgstr "Radnje"
+msgstr ""
 
-#: index.html:638 tablet7in.html:722
+#: index.html:534 tablet7in.html:690
 msgid "Run/toggle action"
-msgstr "Pokreni/prebaci radnju"
+msgstr ""
 
-#: index.html:649 tablet7in.html:757
+#: index.html:545 tablet7in.html:725
 msgid "Planet map"
-msgstr "Karta planeta"
+msgstr ""
 
-#: index.html:650 tablet7in.html:758
+#: index.html:546 tablet7in.html:726
 msgid "Planet map pointer"
-msgstr "Pokazivač karte planeta"
+msgstr ""
 
-#: index.html:654 tablet7in.html:762
+#: index.html:550 tablet7in.html:730
 msgid "Type to search location"
-msgstr "Upišite lokaciju za pretraživanje"
+msgstr ""
 
-#: index.html:683 tablet7in.html:791
+#: index.html:579 tablet7in.html:759
 msgid "Interaction"
-msgstr "Interakcija"
+msgstr ""
 
-#: index.html:684 tablet7in.html:792
+#: index.html:580 tablet7in.html:760
 msgid "Current scene:"
-msgstr "Trenutna scena:"
+msgstr ""
 
-#: index.html:687 tablet7in.html:795
+#: index.html:583 tablet7in.html:763
 msgid "View controls"
-msgstr "Kontrole pogleda"
+msgstr ""
 
-#: index.html:693 tablet7in.html:801
+#: index.html:589 tablet7in.html:769
 msgid "Movement controls"
-msgstr "Kontrole kretanja"
+msgstr ""
 
-#: index.html:705 tablet7in.html:813
-msgid "Torchlight"
-msgstr "Svjetiljka"
-
-#: index.html:712 tablet7in.html:820
+#: index.html:605 tablet7in.html:785
 msgid "Scene selection"
-msgstr "Odabir scene"
+msgstr ""
 
-#: index.html:716 tablet7in.html:824
+#: index.html:609 tablet7in.html:789
 msgid "Load selected scene"
-msgstr "Učitaj odabranu scenu"
+msgstr ""
 
-#: index.html:740 tablet7in.html:849
+#: index.html:633 tablet7in.html:814
 msgid "No response from server"
-msgstr "Nema odgovora poslužitelja"
+msgstr ""
 
-#: index.html:741 tablet7in.html:850
+#: index.html:634 tablet7in.html:815
 msgid "No response from server for %1 seconds. Is Stellarium still running?"
-msgstr "Nema odgovora poslužitelja %1 sekundi. Je li Stellarium još u radu?"
+msgstr ""
 
 #: tablet7in.html:32
 msgid "Time Jump"
-msgstr "Vremenski skok"
+msgstr ""
 
 #: tablet7in.html:37
 msgid "Grids"
-msgstr "Mreže"
+msgstr ""
 
 #: tablet7in.html:97
 msgid "Up/Left"
-msgstr "Gore/Lijevo"
+msgstr ""
 
 #: tablet7in.html:97
 msgid "Up"
-msgstr "Gore"
+msgstr ""
 
 #: tablet7in.html:97
 msgid "Up/Right"
-msgstr "Gore/Desno"
+msgstr ""
 
 #: tablet7in.html:97
 msgid "Left"
-msgstr "Lijevo"
+msgstr ""
 
 #: tablet7in.html:97
 msgid "Focus on selected object"
-msgstr "Fokusiraj na odabrani objekt"
+msgstr ""
 
 #: tablet7in.html:97
 msgid "Focus on selection"
-msgstr "Fokusiraj na odabir"
+msgstr ""
 
 #: tablet7in.html:97
 msgid "Right"
-msgstr "Desno"
+msgstr ""
 
 #: tablet7in.html:97
 msgid "Down/Left"
-msgstr "Dolje/Lijevo"
+msgstr ""
 
 #: tablet7in.html:97
 msgid "Down"
-msgstr "Dolje"
+msgstr ""
 
 #: tablet7in.html:97
 msgid "Down/Right"
-msgstr "Dolje/Desno"
+msgstr ""
+
+#: tablet7in.html:101
+msgid "View towards horizon at Azimuth"
+msgstr ""
+
+#: tablet7in.html:123
+msgid "Vertical View offset"
+msgstr ""
+
+#: tablet7in.html:133
+msgid "Reset"
+msgstr ""
 
 #: tablet7in.html:266
 msgid "Sirius"
-msgstr "Sirius"
+msgstr ""
 
 #: tablet7in.html:267
 msgid "Arcturus"
-msgstr "Arcturus"
+msgstr ""
 
 #: tablet7in.html:268
 msgid "Capella"
-msgstr "Capella"
+msgstr ""
 
 #: tablet7in.html:269
 msgid "Vega"
-msgstr "Vega"
+msgstr ""
 
 #: tablet7in.html:270
 msgid "Deneb"
-msgstr "Deneb"
+msgstr ""
 
 #: tablet7in.html:271
 msgid "Altair"
-msgstr "Altair"
+msgstr ""
 
 #: tablet7in.html:272
 msgid "Andromeda Galaxy"
-msgstr "Galaksija Andromeda"
+msgstr ""
 
 #: tablet7in.html:273
 msgid "Hercules Cluster"
-msgstr "Skup u Herkulu"
+msgstr ""
 
 #: tablet7in.html:274
 msgid "Orion Nebula"
-msgstr "Orionova maglica"
+msgstr ""
 
 #: tablet7in.html:275
 msgid "Eta Carinae Nebula"
-msgstr "Eta Carinae Maglica"
+msgstr ""
 
 #: tablet7in.html:276
 msgid "47 Tucanae Cluster"
-msgstr "Skup 47 Tucanae "
+msgstr ""
 
 #: tablet7in.html:277
 msgid "Aries"
-msgstr "Ovan"
+msgstr ""
 
 #: tablet7in.html:278
 msgid "Taurus"
-msgstr "Bik"
+msgstr ""
 
 #: tablet7in.html:279
 msgid "Gemini"
-msgstr "Blizanci"
+msgstr ""
 
 #: tablet7in.html:280
 msgid "Cancer"
-msgstr "Rak"
+msgstr ""
 
 #: tablet7in.html:281
 msgid "Leo"
-msgstr "Lav"
+msgstr ""
 
 #: tablet7in.html:282
 msgid "Virgo"
-msgstr "Djevica"
+msgstr ""
 
 #: tablet7in.html:283
 msgid "Libra"
-msgstr "Vaga"
+msgstr ""
 
 #: tablet7in.html:284
 msgid "Scorpius"
-msgstr "Škorpion"
+msgstr ""
 
 #: tablet7in.html:285
 msgid "Sagittarius"
-msgstr "Strijelac"
+msgstr ""
 
 #: tablet7in.html:286
 msgid "Capricornus"
-msgstr "Jarac"
+msgstr ""
 
 #: tablet7in.html:287
 msgid "Aquarius"
-msgstr "Vodenjak"
+msgstr ""
 
 #: tablet7in.html:288
 msgid "Pisces"
-msgstr "Ribe"
+msgstr ""
 
-#: tablet7in.html:742
+#: tablet7in.html:672
+msgid "Constellation selection isolated"
+msgstr ""
+
+#: tablet7in.html:710
 msgid "Favorites"
-msgstr "Favoriti"
+msgstr ""
 
-#: tablet7in.html:744
+#: tablet7in.html:712
 msgid "Show 1"
-msgstr "Prikaži 1"
+msgstr ""
 
-#: tablet7in.html:745
+#: tablet7in.html:713
 msgid "Remove Labels and Images"
-msgstr "Ukloni nazive i fotografije"
+msgstr ""
 
-#: tablet7in.html:745
+#: tablet7in.html:713
 msgid "Cleanup Screen"
-msgstr "Očisti ekran"
+msgstr ""

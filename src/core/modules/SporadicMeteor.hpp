@@ -33,10 +33,7 @@ public:
 	virtual ~SporadicMeteor();
 
 private:
-	static QList<ColorPair> getRandColor();
-	static const float _RAND_MAX;
-	static const double _RAND_MAX_P1;
-	static const float _RAND_MAX_P1_f;
+	QList<ColorPair> getRandColor();
 };
 
 

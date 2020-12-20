@@ -62,8 +62,8 @@ void StoredViewDialog::createDialogContent()
 	connect(ui->textEditDescription, &CustomTextEdit::editingFinished, this, &StoredViewDialog::updateCurrentView);
 
 	StelGui* gui = dynamic_cast<StelGui*>(StelApp::getInstance().getGui());
-	if (gui)
-		ui->textEditDescription->document()->setDefaultStyleSheet(QString(gui->getStelStyle().htmlStyleSheet));
+	Q_ASSERT(gui);
+	ui->textEditDescription->document()->setDefaultStyleSheet(QString(gui->getStelStyle().htmlStyleSheet));
 
 	//we use a sorta MVC system here
 	viewModel = new StoredViewModel(ui->listView);

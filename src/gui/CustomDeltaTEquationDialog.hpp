@@ -36,18 +36,20 @@ class CustomDeltaTEquationDialog : public StelDialog
 
 public:
 	CustomDeltaTEquationDialog();
-	virtual ~CustomDeltaTEquationDialog() Q_DECL_OVERRIDE;
+	virtual ~CustomDeltaTEquationDialog();
 
 public slots:
-	virtual void retranslate() Q_DECL_OVERRIDE;
+	void retranslate();
+	void setVisible(bool);
 
 protected:
 	//! Initialize the dialog widgets and connect the signals/slots.
-	virtual void createDialogContent() Q_DECL_OVERRIDE;
+	virtual void createDialogContent();
 	Ui_customDeltaTEquationDialogForm *ui;
 
 private slots:
 	void saveSettings(void) const;
+
 	void setNDot(const QString& v);
 	void setYear(const QString& v);
 	void setCoeffA(const QString& v);
@@ -58,11 +60,12 @@ private:
 	QSettings* conf;
 	StelCore* core;
 
-	double year;
-	double ndot;
-	Vec3d coeff;
+	float year;
+	float ndot;
+	Vec3f coeff;
 
 	void setDescription(void) const;
+
 };
 
 #endif // CUSTOMDELTATEQUATIONDIALOG_HPP

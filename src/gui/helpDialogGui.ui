@@ -212,8 +212,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normalon>:/graphicGui/tabHelp.png</normalon>
-           <selectedon>:/graphicGui/tabHelp-selected.png</selectedon>
+           <normalon>:/graphicGui/tabicon-help.png</normalon>
           </iconset>
          </property>
         </item>
@@ -223,8 +222,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normalon>:/graphicGui/tabInfo.png</normalon>
-           <selectedon>:/graphicGui/tabInfo-selected.png</selectedon>
+           <normalon>:/graphicGui/tabicon-info.png</normalon>
           </iconset>
          </property>
         </item>
@@ -234,8 +232,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normalon>:/graphicGui/tabLogs.png</normalon>
-           <selectedon>:/graphicGui/tabLogs-selected.png</selectedon>
+           <normalon>:/graphicGui/tabicon-logs.png</normalon>
           </iconset>
          </property>
         </item>

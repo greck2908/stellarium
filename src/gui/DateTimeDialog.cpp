@@ -24,7 +24,6 @@
 #include "StelCore.hpp"
 #include "StelLocaleMgr.hpp"
 #include "StelUtils.hpp"
-#include "StelGui.hpp"
 
 #include "ui_dateTimeDialogGui.h"
 
@@ -40,11 +39,7 @@ DateTimeDialog::DateTimeDialog(QObject* parent) :
 	hour(0),
 	minute(0),
 	second(0),
-	jd(0),
-	oldyear(0),
-	oldmonth(0),
-	oldday(0),
-	enableFocus(false)
+	jd(0)
 {
 	ui = new Ui_dateTimeDialogForm;
 	updateTimer=new QTimer(this); // parenting will auto-delete timer on destruction!
@@ -75,24 +70,6 @@ void DateTimeDialog::createDialogContent()
 	ui->dateDelimiterLabel2->setText(delimiter);
 
 	connectSpinnerEvents();
-	StelGui* gui = dynamic_cast<StelGui*>(StelApp::getInstance().getGui());
-	if (gui)
-	{
-		connect(gui, SIGNAL(flagEnableFocusOnDaySpinnerChanged(bool)), this, SLOT(setFlagEnableFocus(bool)));
-		setFlagEnableFocus(gui->getFlagEnableFocusOnDaySpinner());
-	}
-}
-
-void DateTimeDialog::setFlagEnableFocus(bool b)
-{
-	if (enableFocus!=b)
-	{
-		enableFocus=b;
-		if (enableFocus)
-			ui->spinner_day->setFocus();
-		else
-			ui->dateTimeTab->setFocus();
-	}
 }
 
 void DateTimeDialog::connectSpinnerEvents() const
@@ -124,15 +101,23 @@ void DateTimeDialog::disconnectSpinnerEvents()const
 //! the widgets and signals
 bool DateTimeDialog::valid(int y, int m, int d, int h, int min, int s)
 {
-	if (!StelUtils::changeDateTimeForRollover(y, m, d, h, min, s, &year, &month, &day, &hour, &minute, &second)) {
-		year =  y;
-		month = m;
-		day = d;
-		hour =  h;
-		minute = min;
-		second = s;
+	int dy, dm, dd, dh, dmin, ds;
+
+	if (!StelUtils::changeDateTimeForRollover(y, m, d, h, min, s, &dy, &dm, &dd, &dh, &dmin, &ds)) {
+		dy = y;
+		dm = m;
+		dd = d;
+		dh = h;
+		dmin = min;
+		ds = s;
 	}
 
+	year = dy;
+	month = dm;
+	day = dd;
+	hour = dh;
+	minute = dmin;
+	second = ds;
 	pushToWidgets();
 	core->setJD(newJd());
 	return true;
@@ -152,6 +137,11 @@ void DateTimeDialog::retranslate()
 	}
 }
 
+void DateTimeDialog::styleChanged()
+{
+	// Nothing for now
+}
+
 void DateTimeDialog::close()
 {
 	ui->dateTimeTab->setFocus();
@@ -167,6 +157,8 @@ void DateTimeDialog::yearChanged(int newyear)
 	if ( year != newyear )
 	{
 		valid( newyear, month, day, hour, minute, second );
+		emit core->dateChanged();
+		emit core->dateChangedByYear();
 	}
 }
 
@@ -175,6 +167,8 @@ void DateTimeDialog::monthChanged(int newmonth)
 	if ( month != newmonth )
 	{
 		valid( year, newmonth, day, hour, minute, second );
+		emit core->dateChanged();
+		emit core->dateChangedForMonth();
 	}
 }
 
@@ -182,6 +176,7 @@ void DateTimeDialog::dayChanged(int newday)
 {
 	int delta = newday - day;
 	validJd(jd + delta);
+	emit core->dateChanged();
 }
 
 void DateTimeDialog::hourChanged(int newhour)
@@ -189,19 +184,17 @@ void DateTimeDialog::hourChanged(int newhour)
 	int delta = newhour - hour;
 	validJd(jd + delta/24.);
 }
-
 void DateTimeDialog::minuteChanged(int newminute)
 {
 	int delta = newminute - minute;
 	validJd(jd + delta/1440.);
-}
 
+}
 void DateTimeDialog::secondChanged(int newsecond)
 {
 	int delta = newsecond - second;
 	validJd(jd + delta/86400.);
 }
-
 void DateTimeDialog::jdChanged(double njd)
 {
 	if ( jd != njd)
@@ -209,12 +202,12 @@ void DateTimeDialog::jdChanged(double njd)
 		validJd(njd);
 	}
 }
-
 void DateTimeDialog::mjdChanged(double nmjd)
 {
 	double delta = nmjd - getMjd();
 	validJd(jd + delta);
 }
+
 
 double DateTimeDialog::newJd()
 {
@@ -224,7 +217,6 @@ double DateTimeDialog::newJd()
 
 	return cjd;
 }
-
 
 void DateTimeDialog::pushToWidgets()
 {
@@ -238,15 +230,9 @@ void DateTimeDialog::pushToWidgets()
 	ui->spinner_jd->setValue(jd);
 	ui->spinner_mjd->setValue(getMjd());
 	if (jd<2299161) // 1582-10-15
-	{
 		ui->dateTimeTab->setToolTip(q_("Date and Time in Julian calendar"));
-		ui->dateTimeTabWidget->setTabToolTip(0, q_("Date and Time in Julian calendar"));
-	}
 	else
-	{
 		ui->dateTimeTab->setToolTip(q_("Date and Time in Gregorian calendar"));
-		ui->dateTimeTabWidget->setTabToolTip(0, q_("Date and Time in Gregorian calendar"));
-	}
 	connectSpinnerEvents();
 }
 
@@ -263,17 +249,6 @@ void DateTimeDialog::setDateTime(double newJd)
 		jd = newJd;
 
 		pushToWidgets();
-
-		if (oldyear != year || oldmonth != month || oldday != day) 
-			emit core->dateChanged();
-		if (oldyear != year) 
-			emit core->dateChangedByYear();
-		if (oldmonth != month) 
-			emit core->dateChangedForMonth();
-
-		oldyear = year;
-		oldmonth = month;
-		oldday = day;
 	}
 }
 

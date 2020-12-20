@@ -87,14 +87,10 @@ void SatellitesImportDialog::createDialogContent()
 	ui->setupUi(dialog);
 
 	// Kinetic scrolling
-	kineticScrollingList << ui->listView;
-	StelGui* gui= dynamic_cast<StelGui*>(StelApp::getInstance().getGui());
-	if (gui)
-	{
-		enableKineticScrolling(gui->getFlagUseKineticScrolling());
-		connect(gui, SIGNAL(flagUseKineticScrollingChanged(bool)), this, SLOT(enableKineticScrolling(bool)));
-	}
-
+	QList<QWidget *> addscroll;
+	addscroll << ui->listView;
+	installKineticScrolling(addscroll);
+	
 	connect(ui->closeStelWindow, SIGNAL(clicked()),
 	        this, SLOT(close()));
 	connect(ui->TitleBar, SIGNAL(movedTo(QPoint)),
@@ -170,7 +166,7 @@ void SatellitesImportDialog::getData()
 		// XXX: we should check that there is at least one home location.
 		QString homeDirPath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation)[0];
 		sourceFilePaths = QFileDialog::getOpenFileNames(
-				      Q_NULLPTR,
+		                      &StelMainView::getInstance(),
 		                      q_("Select TLE source file(s)..."),
 		                      homeDirPath, "*.*");
 		if (sourceFilePaths.isEmpty())
@@ -235,7 +231,7 @@ void SatellitesImportDialog::receiveDownload(QNetworkReply* networkReply)
 		if (progressBar)
 		{
 			StelApp::getInstance().removeProgressBar(progressBar);
-			progressBar = Q_NULLPTR;
+			progressBar = nullptr;
 		}
 		
 		if (sourceFiles.isEmpty())
@@ -325,7 +321,7 @@ void SatellitesImportDialog::reset()
 	if (progressBar)
 	{
 		StelApp::getInstance().removeProgressBar(progressBar);
-		progressBar = Q_NULLPTR;
+		progressBar = nullptr;
 	}
 }
 
@@ -369,12 +365,13 @@ void SatellitesImportDialog::populateList()
 		if (existingIDs.contains(i.key()))
 			continue;
 		
-		TleData tle = i.value();		
-		QStandardItem* newItem = new QStandardItem(QString("%1 (NORAD %2)").arg(tle.name, tle.id)); // Available to search via NORAD number
+		TleData tle = i.value();
+		QStandardItem* newItem = new QStandardItem(tle.name);
 		newItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
 		newItem->setCheckState(Qt::Unchecked);
-		newItem->setData(tle.id, Qt::UserRole);		
-		newItem->setToolTip(QString(q_("Catalog Number: %1")).arg(tle.id));
+		newItem->setData(tle.id, Qt::UserRole);
+		QString text = QString(q_("Catalog Number: %1")).arg(tle.id);
+		newItem->setToolTip(text);
 		newSatellitesModel->appendRow(newItem);
 	}
 	existingIDs.clear();

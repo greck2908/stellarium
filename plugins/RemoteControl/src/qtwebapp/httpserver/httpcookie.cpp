@@ -32,6 +32,7 @@ HttpCookie::HttpCookie(const QByteArray source)
     QList<QByteArray> list=splitCSV(source);
     for (auto part : list)
     {
+
         // Split the part into name and value
         QByteArray name;
         QByteArray value;

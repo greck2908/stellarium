@@ -24,10 +24,9 @@ Plane::Plane(): distance(0.0f), sDistance(0.0f)
 {
 }
 
-Plane::Plane(Vec3f &v1, Vec3f &v2, Vec3f &v3): Plane(v1, v2, v3, SPolygon::CCW)
+Plane::Plane(Vec3f &v1, Vec3f &v2, Vec3f &v3): distance(0.0f), sDistance(0.0f)
 {
-	distance=0.0f;
-	sDistance=0.0f;
+	Plane(v1, v2, v3, SPolygon::CCW);
 }
 
 Plane::Plane(const Vec4f &e): sDistance(0.0f)

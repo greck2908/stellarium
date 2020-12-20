@@ -23,6 +23,7 @@
 #include <QObject>
 #include "StelDialog.hpp"
 
+class QToolButton;
 class Ui_ConfigureOrbitColorsDialogForm;
 
 class ConfigureOrbitColorsDialog : public StelDialog
@@ -31,18 +32,41 @@ class ConfigureOrbitColorsDialog : public StelDialog
 
 public:
 	ConfigureOrbitColorsDialog();
-	virtual ~ConfigureOrbitColorsDialog() Q_DECL_OVERRIDE;
+	virtual ~ConfigureOrbitColorsDialog();
 
 public slots:
-	virtual void retranslate() Q_DECL_OVERRIDE;
+        void retranslate();
 
 private slots:
+	void askGenericOrbitColor();
+	void askMajorPlanetsGroupOrbitColor();
+	void askMinorPlanetsGroupOrbitColor();
+	void askDwarfPlanetsGroupOrbitColor();
+	void askMoonsGroupOrbitColor();
+	void askCubewanosGroupOrbitColor();
+	void askPlutinosGroupOrbitColor();
+	void askSDOGroupOrbitColor();
+	void askOCOGroupOrbitColor();
+	void askCometsGroupOrbitColor();
+	void askSednoidsGroupOrbitColor();
+	void askMercuryOrbitColor();
+	void askVenusOrbitColor();
+	void askEarthOrbitColor();
+	void askMarsOrbitColor();
+	void askJupiterOrbitColor();
+	void askSaturnOrbitColor();
+	void askUranusOrbitColor();
+	void askNeptuneOrbitColor();
 	void setColorStyle();
+
+private:
+	void colorButton(QToolButton *toolButton, QString propName);
 
 protected:
         //! Initialize the dialog widgets and connect the signals/slots.
-	virtual void createDialogContent() Q_DECL_OVERRIDE;
+        virtual void createDialogContent();
 	Ui_ConfigureOrbitColorsDialogForm *ui;
+
 };
 
 #endif // CONFIGUREORBITCOLORSDIALOG_HPP

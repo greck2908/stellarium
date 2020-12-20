@@ -23,6 +23,7 @@
 #include <QObject>
 #include "StelDialog.hpp"
 
+class QToolButton;
 class Ui_ConfigureDSOColorsDialogForm;
 
 class ConfigureDSOColorsDialog : public StelDialog
@@ -31,15 +32,58 @@ class ConfigureDSOColorsDialog : public StelDialog
 
 public:
 	ConfigureDSOColorsDialog();
-	virtual ~ConfigureDSOColorsDialog() Q_DECL_OVERRIDE;
+	virtual ~ConfigureDSOColorsDialog();
 
 public slots:
-	virtual void retranslate() Q_DECL_OVERRIDE;
+        void retranslate();
+
+private slots:
+	// DSO markers and labels colors
+	void askDSOLabelsColor();
+	void askDSOMarkersColor();
+	void askDSOGalaxiesColor();
+	void askDSOActiveGalaxiesColor();
+	void askDSORadioGalaxiesColor();
+	void askDSOInteractingGalaxiesColor();
+	void askDSOQuasarsColor();
+	void askDSOPossibleQuasarsColor();
+	void askDSOStarClustersColor();
+	void askDSOOpenStarClustersColor();
+	void askDSOGlobularStarClustersColor();
+	void askDSOStellarAssociationsColor();
+	void askDSOStarCloudsColor();
+	void askDSOStarsColor();
+	void askDSOSymbioticStarsColor();
+	void askDSOEmissionLineStarsColor();
+	void askDSONebulaeColor();
+	void askDSOPlanetaryNebulaeColor();
+	void askDSODarkNebulaeColor();
+	void askDSOReflectionNebulaeColor();
+	void askDSOBipolarNebulaeColor();
+	void askDSOEmissionNebulaeColor();
+	void askDSONebulosityClustersColor();
+	void askDSOPossiblePlanetaryNebulaeColor();
+	void askDSOProtoplanetaryNebulaeColor();
+	void askDSOHydrogenRegionsColor();
+	void askDSOInterstellarMatterColor();
+	void askDSOEmissionObjectsColor();
+	void askDSOMolecularCloudsColor();
+	void askDSOBLLacObjectsColor();
+	void askDSOBlazarsColor();
+	void askDSOYoungStellarObjectsColor();
+	void askDSOSupernovaRemnantsColor();
+	void askDSOSupernovaCandidatesColor();
+	void askDSOSupernovaRemnantCandidatesColor();
+	void askDSOGalaxyClustersColor();
+
+private:
+	void colorButton(QToolButton *toolButton, QString propName);
 
 protected:
         //! Initialize the dialog widgets and connect the signals/slots.
-	virtual void createDialogContent() Q_DECL_OVERRIDE;
+        virtual void createDialogContent();
 	Ui_ConfigureDSOColorsDialogForm *ui;
+
 };
 
 #endif // CONFIGUREDSOCOLORSDIALOG_HPP

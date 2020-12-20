@@ -39,50 +39,45 @@ HipsMgr::HipsMgr()
 
 HipsMgr::~HipsMgr()
 {
-	if (StelApp::getInstance().getNetworkAccessManager()->networkAccessible()==QNetworkAccessManager::Accessible)
+	//store active HIPS to config.ini
+	QSettings* conf = StelApp::getInstance().getSettings();
+	conf->beginGroup("hips");
+	conf->setValue("show", getFlagShow());
+
+	// remove 0.18.0 scheme
+	conf->remove("visible");
+
+	QStringList surveyUrls;
+	for (auto survey: surveys)
 	{
-		// Store active HiPS to config.ini if network is available
-		QSettings* conf = StelApp::getInstance().getSettings();
-		conf->beginGroup("hips");
-		conf->setValue("show", getFlagShow());
-
-		// remove 0.18.0 scheme
-		conf->remove("visible");
-
-		QStringList surveyUrls;
-		for (auto survey: surveys)
-		{
-			if (survey->isVisible() && survey->planet.isEmpty())
-				surveyUrls << survey->getUrl();
-		}
-
-		int surveyListSize = surveyUrls.count();
-		if (surveyListSize==0)
-		{
-			// remove old urls
-			conf->remove("surveys");
-		}
-		else
-		{
-			conf->beginWriteArray("surveys");
-			for(int i=0;i<surveyListSize;i++)
-			{
-				conf->setArrayIndex(i);
-				conf->setValue("url", surveyUrls.at(i));
-			}
-			conf->endArray();
-		}
-
-		conf->endGroup();
-		conf->sync();
+		if (survey->isVisible() && survey->planet.isEmpty())
+			surveyUrls << survey->getUrl();
 	}
+
+	int surveyListSize = surveyUrls.count();
+	if (surveyListSize==0)
+	{
+		// remove old urls
+		conf->remove("surveys");
+	}
+	else
+	{
+		conf->beginWriteArray("surveys");
+		for(int i=0;i<surveyListSize;i++)
+		{
+			conf->setArrayIndex(i);
+			conf->setValue("url", surveyUrls.at(i));
+		}
+		conf->endArray();
+	}
+
+	conf->endGroup();
+	conf->sync();
 }
 
 void HipsMgr::loadSources()
 {
-	if (state != Created)
-		return; // Already loaded.
-
+	if (state != Created) return; // Already loaded.
 	state = Loading;
 	emit stateChanged(state);
 	QSettings* conf = StelApp::getInstance().getSettings();
@@ -98,12 +93,10 @@ void HipsMgr::loadSources()
 	}
 	conf->endArray();
 
-	// Use alasky (all pixelate surveys from MocServer) & data.stellarium.org if there are not values:
+	// Use alasky & data.stellarium.org if there are not values:
 	if (sources.isEmpty())
-	{
-		sources << "http://alasky.u-strasbg.fr/MocServer/query?*/P/*&get=record"
-			<< "https://data.stellarium.org/surveys/hipslist";
-	}
+		sources << "http://alaskybis.unistra.fr/hipslist"
+		        << "https://data.stellarium.org/surveys/hipslist";
 
 	for (QUrl source: sources)
 	{
@@ -138,17 +131,11 @@ void HipsMgr::init()
 	conf->beginGroup("hips");
 	setFlagShow(conf->value("show", false).toBool());
 	int size = conf->beginReadArray("surveys");
-	conf->endArray();	
-	conf->endGroup();
+	conf->endArray();
 	bool hasVisibleSurvey = size>0 ? true: false;
+	conf->endGroup();
 
-	if (StelApp::getInstance().getNetworkAccessManager()->networkAccessible()==QNetworkAccessManager::NotAccessible)
-	{
-		setFlagShow(false);
-		hasVisibleSurvey = false;
-	}
-
-	addAction("actionShow_Hips_Surveys", N_("Display Options"), N_("Toggle Hierarchical Progressive Surveys"), "flagShow", "Ctrl+Alt+D");
+	addAction("actionShow_Hips_Surveys", N_("Display Options"), N_("Toggle Hierarchical Progressive Surveys (experimental)"), "flagShow", "Ctrl+Alt+D");
 
 	// Start loading the sources only after stellarium has time to set up the proxy.
 	// We only do it if we actually have a visible survey.  Otherwise it's
@@ -204,7 +191,7 @@ void HipsMgr::update(double deltaTime)
 {
 	for (auto survey: surveys)
 	{
-		survey->fader.update(static_cast<int>(deltaTime * 1000));
+		survey->fader.update((int)(deltaTime * 1000));
 	}
 }
 

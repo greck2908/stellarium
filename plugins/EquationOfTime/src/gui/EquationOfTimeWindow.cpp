@@ -22,7 +22,6 @@
 #include "ui_equationOfTimeWindow.h"
 
 #include "StelApp.hpp"
-#include "StelCore.hpp"
 #include "StelLocaleMgr.hpp"
 #include "StelModule.hpp"
 #include "StelModuleMgr.hpp"
@@ -72,10 +71,8 @@ void EquationOfTimeWindow::createDialogContent()
 	ui->checkBoxShowButton->setChecked(eq->getFlagShowEOTButton());
 	connect(ui->checkBoxShowButton, SIGNAL(clicked(bool)), eq, SLOT(setFlagShowEOTButton(bool)));
 
-	connect(ui->pushButtonSave, SIGNAL(clicked()), this, SLOT(saveEquationOfTimeSettings()));	
+	connect(ui->pushButtonSave, SIGNAL(clicked()), this, SLOT(saveEquationOfTimeSettings()));
 	connect(ui->pushButtonReset, SIGNAL(clicked()), this, SLOT(resetEquationOfTimeSettings()));
-
-	connectColorButton(ui->textColorButton, "EquationOfTime.textColor", "EquationOfTime/text_color");
 
 	setAboutHtml();
 }
@@ -122,11 +119,5 @@ void EquationOfTimeWindow::saveEquationOfTimeSettings()
 
 void EquationOfTimeWindow::resetEquationOfTimeSettings()
 {
-	if (askConfirmation())
-	{
-		qDebug() << "[EquationOfTime] restore defaults...";
-		eq->restoreDefaults();
-	}
-	else
-		qDebug() << "[EquationOfTime] restore defaults is canceled...";
+	eq->restoreDefaults();
 }

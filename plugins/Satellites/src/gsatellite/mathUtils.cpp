@@ -51,6 +51,7 @@ double AcTan(double sinx, double cosx)
 
 		return (KPI + atan(sinx/cosx));
 	}
+
 } /* Function AcTan */
 
 /* Returns square of a double */

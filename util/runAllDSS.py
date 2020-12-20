@@ -8,7 +8,7 @@ import sys
 import os
 import subprocess
 
-def allDSS():
+def all():
 	for i in range(1,895):
 		str = "/home/fab1/prog/stellarium/util/dssheaderToJSON.py" + " S %i %i" % (i,i+1)
 		print str
@@ -22,4 +22,4 @@ def allDSS():
 			print >>sys.stderr, "Execution failed:", e
 
 if __name__ == "__main__":
-    allDSS()
+    all()

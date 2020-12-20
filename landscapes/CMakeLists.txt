@@ -1,5 +1,3 @@
-# Exclude from standard package
-#ADD_SUBDIRECTORY( armintxe_cave ) 
 ADD_SUBDIRECTORY( guereins ) 
 ADD_SUBDIRECTORY( trees ) 
 ADD_SUBDIRECTORY( moon ) 

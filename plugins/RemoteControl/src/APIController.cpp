@@ -27,6 +27,7 @@ int APIServiceResponse::parametersMetaTypeId = qRegisterMetaType<APIParameters>(
 
 APIController::APIController(int prefixLength, QObject* parent) : HttpRequestHandler(parent), m_prefixLength(prefixLength)
 {
+
 }
 
 APIController::~APIController()

@@ -38,6 +38,7 @@ class DECLSPEC HttpRequest {
     friend class HttpSessionStore;
 
 public:
+
     /** Values for getStatus() */
     enum RequestStatus {waitForRequest, waitForHeader, waitForBody, complete, abort};
 
@@ -150,6 +151,7 @@ public:
     QHostAddress getPeerAddress() const;
 
 private:
+
     /** Request headers */
     QMultiMap<QByteArray,QByteArray> headers;
 
@@ -227,6 +229,7 @@ private:
 
     /** Buffer for collecting characters of request and header lines */
     QByteArray lineBuffer;
+
 };
 
 #endif // HTTPREQUEST_H

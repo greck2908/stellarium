@@ -82,10 +82,13 @@ public:
 	//! Return the source URL of the survey.
 	const QString& getUrl() const {return url;}
 
+	//! Return the frame name of the survey.
+	const QString getFrame() const { return hipsFrame; }
+
 	//! Get whether the survey is still loading.
 	bool isLoading(void) const;
 
-	bool isPlanetarySurvey(void) const { return planetarySurvey; }
+	bool isPlanetarySurvey(void) const;
 
 	//! Parse a hipslist file into a list of surveys.
 	static QList<HipsSurveyP> parseHipslist(const QString& data);
@@ -98,10 +101,9 @@ signals:
 private:
 	LinearFader fader;
 	QString url;
-	QString hipsFrame = "equatorial";
+	QString hipsFrame;
 	QString planet;
 	double releaseDate; // As UTC Julian day.
-	bool planetarySurvey;
 	QCache<long int, HipsTile> tiles;
 	// reply to the initial download of the properties file and to the
 	// allsky texture.

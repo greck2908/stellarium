@@ -19,7 +19,7 @@
 #ifndef TESTTELESCOPECLIENTINDI_HPP
 #define TESTTELESCOPECLIENTINDI_HPP
 
-#include <QtTest>
+#include <QTest>
 
 class TestTelescopeClientINDI : public QObject
 {

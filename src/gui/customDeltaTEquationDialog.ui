@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>335</width>
-    <height>204</height>
+    <height>220</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -127,7 +127,10 @@
    <item>
     <widget class="QGroupBox" name="customDeltaTEquationGroupBox">
      <property name="title">
-      <string>Custom equation</string>
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <property name="leftMargin">

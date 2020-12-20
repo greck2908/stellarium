@@ -36,8 +36,7 @@ CustomObjectMgr::CustomObjectMgr()
 {
 	setObjectName("CustomObjectMgr");
 	conf = StelApp::getInstance().getSettings();
-	setFontSize(StelApp::getInstance().getScreenFontSize());
-	connect(&StelApp::getInstance(), SIGNAL(screenFontSizeChanged(int)), this, SLOT(setFontSize(int)));
+	font.setPixelSize(StelApp::getInstance().getBaseFontSize());
 }
 
 CustomObjectMgr::~CustomObjectMgr()
@@ -122,11 +121,10 @@ void CustomObjectMgr::init()
 
 	customObjects.clear();
 
-	setMarkersColor(Vec3f(conf->value("color/custom_marker_color", "0.1,1.0,0.1").toString()));
+	setMarkersColor(StelUtils::strToVec3f(conf->value("color/custom_marker_color", "0.1,1.0,0.1").toString()));
 	setMarkersSize(conf->value("gui/custom_marker_size", 5.f).toFloat());
 	// Limit the click radius to 15px in any direction
 	setActiveRadiusLimit(conf->value("gui/custom_marker_radius_limit", 15).toInt());
-	setSelectPriority(conf->value("gui/custom_marker_priority", 0.f).toFloat());
 
 	GETSTELMODULE(StelObjectMgr)->registerStelObjectMgr(this);
 }
@@ -135,16 +133,6 @@ void CustomObjectMgr::deinit()
 {
 	customObjects.clear();	
 	texPointer.clear();
-}
-
-void CustomObjectMgr::setSelectPriority(float priority)
-{
-	CustomObject::selectPriority = priority;
-}
-
-float CustomObjectMgr::getSelectPriority() const
-{
-	return CustomObject::selectPriority;
 }
 
 void CustomObjectMgr::addCustomObject(QString designation, Vec3d coordinates, bool isVisible)
@@ -157,8 +145,6 @@ void CustomObjectMgr::addCustomObject(QString designation, Vec3d coordinates, bo
 
 		if (isVisible)
 			countMarkers++;
-
-		emit StelApp::getInstance().getCore()->updateSearchLists();
 	}
 }
 
@@ -202,14 +188,12 @@ void CustomObjectMgr::removeCustomObjects()
 	customObjects.clear();
 	//This marker count can be set to 0 because there will be no markers left and a duplicate will be impossible
 	countMarkers = 0;
-	emit StelApp::getInstance().getCore()->updateSearchLists();
 }
 
 void CustomObjectMgr::removeCustomObject(CustomObjectP obj)
 {
 	setSelected("");
 	customObjects.removeOne(obj);
-	emit StelApp::getInstance().getCore()->updateSearchLists();
 }
 
 void CustomObjectMgr::removeCustomObject(QString englishName)
@@ -220,7 +204,7 @@ void CustomObjectMgr::removeCustomObject(QString englishName)
 		//If we have a match for the thing we want to delete
 		if(cObj && cObj->getEnglishName()==englishName && cObj->initialized)
 			customObjects.removeOne(cObj);
-	}	
+	}
 }
 
 void CustomObjectMgr::draw(StelCore* core)
@@ -237,6 +221,7 @@ void CustomObjectMgr::draw(StelCore* core)
 
 	if (GETSTELMODULE(StelObjectMgr)->getFlagSelectedObjectPointer())
 		drawPointer(core, painter);
+
 }
 
 void CustomObjectMgr::drawPointer(StelCore* core, StelPainter& painter)
@@ -254,7 +239,8 @@ void CustomObjectMgr::drawPointer(StelCore* core, StelPainter& painter)
 		if (!painter.getProjector()->project(pos, screenpos))
 			return;
 
-		painter.setColor(obj->getInfoColor());
+		const Vec3f& c(obj->getInfoColor());
+		painter.setColor(c[0],c[1],c[2]);
 		texPointer->bind();
 		painter.setBlending(true);
 		painter.drawSprite2dMode(screenpos[0], screenpos[1], 13.f, StelApp::getInstance().getTotalRunTime()*40.);
@@ -267,7 +253,7 @@ QList<StelObjectP> CustomObjectMgr::searchAround(const Vec3d& av, double limitFo
 
 	Vec3d v(av);
 	v.normalize();
-	const double cosLimFov = cos(limitFov * M_PI/180.);
+	double cosLimFov = cos(limitFov * M_PI/180.);
 	Vec3d equPos;
 
 	for (const auto& cObj : customObjects)
@@ -276,7 +262,7 @@ QList<StelObjectP> CustomObjectMgr::searchAround(const Vec3d& av, double limitFo
 		{
 			equPos = cObj->XYZ;
 			equPos.normalize();
-			if (equPos.dot(v) >= cosLimFov)
+			if (equPos[0]*v[0] + equPos[1]*v[1] + equPos[2]*v[2]>=cosLimFov)
 			{
 				result.append(qSharedPointerCast<StelObject>(cObj));
 			}
@@ -375,7 +361,7 @@ void CustomObjectMgr::setMarkersColor(const Vec3f& c)
 	CustomObject::markerColor = c;
 }
 
-Vec3f CustomObjectMgr::getMarkersColor(void) const
+const Vec3f& CustomObjectMgr::getMarkersColor(void) const
 {
 	return CustomObject::markerColor;
 }
@@ -394,3 +380,4 @@ void CustomObjectMgr::setActiveRadiusLimit(const int radius)
 {
 	radiusLimit = radius;
 }
+
